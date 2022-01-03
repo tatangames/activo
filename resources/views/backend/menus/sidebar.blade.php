@@ -82,10 +82,24 @@
 
 
                 <li class="nav-item">
-                    <a href="#" target="frameprincipal" class="nav-link">
-                        <i class="fas fa-calculator nav-icon"></i>
-                        <p>Calculos</p>
+
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <p>
+                       Calculos
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
                     </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.calculos.depreciacion.index') }}" target="frameprincipal" class="nav-link">
+                                <i class="fas fa-briefcase nav-icon"></i>
+                                <p>Depreciación</p>
+                            </a>
+                        </li>
+
+                    </ul>
                 </li>
 
 

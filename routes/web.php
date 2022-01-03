@@ -14,7 +14,7 @@ use App\Http\Controllers\Backend\CodDepre\CodigoDepreciacionController;
 use App\Http\Controllers\Backend\Bienes\BienesVehiculoController;
 use App\Http\Controllers\Backend\Bienes\BienesMueblesController;
 use App\Http\Controllers\Backend\Bienes\BienesInmueblesController;
-
+use App\Http\Controllers\Backend\Calculos\CalculoDepreciacionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -134,5 +134,12 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
     Route::post('/admin/bienes/inmuebles/borrar', [BienesInmueblesController::class, 'borrarRegistro']);
     Route::get('/admin/bienes/inmuebles/vista-editar/{id}', [BienesInmueblesController::class,'vistaEditarRegistro']);
     Route::post('/admin/bienes/inmuebles/editar', [BienesInmueblesController::class, 'editarBienInmuebles']);
+
+    // --- CALCULOS DEPRECIACION ---
+    Route::get('/admin/calculos/depreciacion/index', [CalculoDepreciacionController::class,'index'])->name('admin.calculos.depreciacion.index');
+
+
+
+
 
 
