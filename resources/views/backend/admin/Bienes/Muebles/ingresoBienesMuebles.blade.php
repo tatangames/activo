@@ -50,8 +50,6 @@
                             <div class="col-md-6">
                                 <div class="card">
                                     <div class="card-body">
-
-
                                         <div class="form-group">
                                             <label>Descripción</label>
                                             <div class="input-group">
@@ -81,7 +79,7 @@
                                                 <select class="form-control" id="select-departamento">
                                                     <option value="0">------------------</option>
                                                     @foreach($departamento as $item)
-                                                        <option value="{{$item->id}}">{{$item->nombre}}</option>
+                                                        <option value="{{$item->id}}">{{$item->codigo}} - {{$item->nombre}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -96,7 +94,7 @@
                                                 <select class="form-control" id="select-codcontable" disabled>
                                                     <option value="0">------------------</option>
                                                     @foreach($codcontable as $item)
-                                                        <option value="{{$item->id}}">{{$item->nombre}} {{ $item->codconta }}</option>
+                                                        <option value="{{$item->id}}">{{$item->codconta}} - {{ $item->nombre }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -111,7 +109,7 @@
                                                 <select class="form-control" id="select-coddepreciacion" disabled>
                                                     <option value="0">------------------</option>
                                                     @foreach($coddepreciacion as $item)
-                                                        <option value="{{$item->id}}">{{$item->nombre}} {{ $item->coddepre }}</option>
+                                                        <option value="{{$item->id}}">{{$item->coddepre}} - {{ $item->nombre }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -133,7 +131,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-shopping-cart"></i></span>
                                                 </div>
-                                                <select class="form-control" id="select-tipocompra" disabled>
+                                                <select class="form-control" id="select-tipocompra">
                                                     <option value="0">------------------</option>
                                                     <option value="1">Nuevo</option>
                                                     <option value="2">Usado</option>
@@ -160,7 +158,7 @@
                                                 <select class="form-control" id="select-coddescriptor">
                                                     <option value="0">------------------</option>
                                                     @foreach($coddescriptor as $item)
-                                                        <option value="{{$item->id}}">{{$item->descripcion}}</option>
+                                                        <option value="{{$item->id}}">{{$item->codigodes}} - {{$item->descripcion}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -225,10 +223,9 @@
                     </div>
 
                 </div>
-                <div class="card-footer">
+                <div class="modal-footer">
                     <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
                 </div>
-
 
             </div>
         </section>
@@ -278,18 +275,15 @@
 
                 if(valor >= 600){
                     document.getElementById('select-codcontable').disabled = false;
-                    document.getElementById('select-tipocompra').disabled = false;
                     document.getElementById('select-coddepreciacion').disabled = false;
                     document.getElementById('valorresidual').disabled = false;
                 }else{
                     document.getElementById('select-codcontable').disabled = true;
-                    document.getElementById('select-tipocompra').disabled = true;
                     document.getElementById('select-coddepreciacion').disabled = true;
                     document.getElementById('valorresidual').disabled = true;
                }
             }else{
                 document.getElementById('select-codcontable').disabled = true;
-                document.getElementById('select-tipocompra').disabled = true;
                 document.getElementById('select-coddepreciacion').disabled = true;
                 document.getElementById('valorresidual').disabled = true;
             }
@@ -316,8 +310,6 @@
             var descripcion = document.getElementById('descripcion').value;
             var valor = document.getElementById('valor').value;
             var departamento = document.getElementById('select-departamento').value;
-            var codcontable = document.getElementById('select-codcontable').value;
-            var coddepreciacion = document.getElementById('select-coddepreciacion').value;
             var coddescriptor = document.getElementById('select-coddescriptor').value;
             var fechacompra = document.getElementById('fechacompra').value;
             var vidautil = document.getElementById('vidautil').value;
@@ -327,16 +319,17 @@
             var documento = document.getElementById('documento');
             var factura = document.getElementById('factura');
 
-            var valorContable = 1;
-            var valorDepre = 1;
-            var datoResidual = 0;
-            var valorTipoCompra = 1;
+            var codcontable = document.getElementById('select-codcontable').value;
+            var coddepreciacion = document.getElementById('select-coddepreciacion').value;
 
-            if(descripcion.length > 0){
-                if(descripcion.length > 2000){
-                    toastr.error('descripción máximo 2000 caracteres');
-                    return;
-                }
+            // por defecto
+            var valorContable = 0;
+            var valorDepreciacion = 0;
+            var datoResidual = 0;
+
+            if(descripcion.length > 2000){
+                toastr.error('descripción máximo 2000 caracteres');
+                return;
             }
 
             if(departamento == '0'){
@@ -346,6 +339,11 @@
 
             if(coddescriptor == '0'){
                 toastr.error('Seleccionar descriptor');
+                return;
+            }
+
+            if(tipocompra == '0'){
+                toastr.error('Seleccionar tipo de compra');
                 return;
             }
 
@@ -375,15 +373,14 @@
                         return;
                     }
 
+                    valorContable = codcontable;
+
                     if(coddepreciacion == '0'){
                         toastr.error('Seleccionar código depreciación');
                         return;
                     }
 
-                    if(tipocompra == '0'){
-                        toastr.error('Seleccionar tipo de compra');
-                        return;
-                    }
+                    valorDepreciacion = coddepreciacion;
 
                     if(valorresidual.length > 0){
                         if(!valorresidual.match(reglaNumeroEntero)) {
@@ -403,9 +400,6 @@
 
                         // obtener valor
                         datoResidual = valorresidual;
-                        valorContable = codcontable;
-                        valorDepre = coddepreciacion;
-                        valorTipoCompra = tipocompra;
                     }
 
                 }
@@ -458,12 +452,12 @@
             formData.append('valor', valor);
             formData.append('departamento', departamento);
             formData.append('codcontable', valorContable);
-            formData.append('coddepreciacion', valorDepre);
+            formData.append('coddepreciacion', valorDepreciacion);
             formData.append('coddedescriptor', coddescriptor);
             formData.append('vidautil', vidautil);
             formData.append('fechacompra', fechacompra);
             formData.append('valorresidual', datoResidual);
-            formData.append('tipocompra', valorTipoCompra);
+            formData.append('tipocompra', tipocompra);
             formData.append('observaciones', observaciones);
 
             axios.post(url+'/bienes/muebles/nuevo', formData, {
@@ -497,6 +491,10 @@
             document.getElementById('observaciones').value = "";
             document.getElementById('documento').value = "";
             document.getElementById('factura').value = "";
+        }
+
+        function salir(){
+            window.location.href="{{ url('/admin/bienes/muebles/index') }}";
         }
 
     </script>

@@ -20,7 +20,7 @@ class CreateBienesVehiculoTable extends Migration
             $table->bigInteger('id_codcontable')->unsigned();
             $table->bigInteger('id_departamento')->unsigned();
 
-            $table->string('descripcion', 5000)->nullable();
+            $table->string('descripcion', 5000);
             $table->decimal('valor', 10, 2)->nullable();
             $table->string('placa', 50)->nullable();
             $table->string('motorista', 150)->nullable();

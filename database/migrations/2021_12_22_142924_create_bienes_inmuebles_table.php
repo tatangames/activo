@@ -16,7 +16,7 @@ class CreateBienesInmueblesTable extends Migration
         Schema::create('bienes_inmuebles', function (Blueprint $table) {
             $table->id();
             $table->integer('codigo')->nullable();
-            $table->string('descripcion', 5000)->nullable();
+            $table->string('descripcion', 5000);
             $table->decimal('valor', 10, 2)->nullable();
             $table->string('ubicacion', 1000)->nullable();
             $table->string('documento', 100)->nullable();

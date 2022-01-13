@@ -45,9 +45,6 @@
                                             <i class="fas fa-eye" title="Editar"></i>&nbsp; Editar
                                         </button>
 
-                                        <button type="button" class="btn btn-danger btn-xs" onclick="informacionBorrar({{ $dato->id }})">
-                                            <i class="fas fa-trash" title="Borrar"></i>&nbsp; Borrar
-                                        </button>
                                     </td>
                                 </tr>
                             @endforeach

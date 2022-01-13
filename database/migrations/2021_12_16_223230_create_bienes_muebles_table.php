@@ -16,12 +16,12 @@ class CreateBienesMueblesTable extends Migration
         Schema::create('bienes_muebles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_departamento')->unsigned();
-            $table->bigInteger('id_codcontable')->unsigned();
-            $table->bigInteger('id_coddepreci')->unsigned();
+            $table->bigInteger('id_codcontable')->nullable()->unsigned();
+            $table->bigInteger('id_coddepreci')->nullable()->unsigned();
             $table->bigInteger('id_descriptor')->unsigned();
-            $table->bigInteger('id_tipocompra')->unsigned();
+            $table->bigInteger('id_tipocompra')->nullable()->unsigned();
 
-            $table->string('descripcion', 2000)->nullable();
+            $table->string('descripcion', 2000);
             $table->decimal('valor', 10, 2)->nullable();
             $table->date('fechacompra')->nullable();
             $table->string('documento', 100)->nullable();
@@ -30,6 +30,7 @@ class CreateBienesMueblesTable extends Migration
             $table->integer('vidautil')->nullable();
             $table->integer('valresidual')->nullable();
             $table->integer('correlativo');
+            $table->string('codigo', 20)->nullable();
 
             $table->foreign('id_descriptor')->references('id')->on('descriptor');
             $table->foreign('id_coddepreci')->references('id')->on('codigo_depreciacion');

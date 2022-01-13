@@ -281,11 +281,9 @@
                 return;
             }
 
-            if(descripcion.length > 0){
-                if(descripcion.length > 2000){
-                    toastr.error('descripción máximo 2000 caracteres');
-                    return;
-                }
+            if(descripcion.length > 5000){
+                toastr.error('descripción máximo 5000 caracteres');
+                return;
             }
 
             var reglaNumeroDecimal = /^[0-9]\d*(\.\d+)?$/;

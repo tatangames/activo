@@ -202,7 +202,7 @@
                     </div>
 
                 </div>
-                <div class="card-footer">
+                <div class="modal-footer">
                     <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
                 </div>
 
@@ -270,11 +270,9 @@
                 return;
             }
 
-            if(descripcion.length > 0){
-                if(descripcion.length > 2000){
-                    toastr.error('descripción máximo 2000 caracteres');
-                    return;
-                }
+            if(descripcion.length > 5000){
+                toastr.error('descripción máximo 5000 caracteres');
+                return;
             }
 
             var reglaNumeroDecimal = /^[0-9]\d*(\.\d+)?$/;
@@ -392,7 +390,7 @@
                     else if(response.data.success === 2){
                         $('#modalAgregar').modal('hide');
                         toastr.success('Registrado correctamente');
-                        limpiarCampos();
+                        limpiarCampos(response.data.codigo);
                     } else{
                         toastr.error('Error al Registrar');
                     }
@@ -403,8 +401,8 @@
                 });
         }
 
-        function limpiarCampos(){
-            document.getElementById('codigo').value = "";
+        function limpiarCampos(codigo){
+            document.getElementById('codigo').value = codigo;
             document.getElementById('descripcion').value = "";
             document.getElementById('valor').value = "";
             document.getElementById('ubicacion').value = "";
@@ -417,6 +415,10 @@
             document.getElementById('edificaciones').value = "";
             document.getElementById('fechapermuta').value = "";
             document.getElementById('documento').value = "";
+        }
+
+        function salir(){
+            window.location.href="{{ url('/admin/bienes/inmuebles/index') }}";
         }
 
     </script>

@@ -36,7 +36,10 @@ class BienesInmueblesController extends Controller
         $codigo = BienesInmuebles::max('codigo');
         if($codigo == null){
             $codigo = 1;
+        }else{
+            $codigo = $codigo + 1;
         }
+
 
         $estados = Estados::orderBy('nombre')->get();
 
@@ -62,7 +65,6 @@ class BienesInmueblesController extends Controller
             $avatar = $request->file('documento');
             Storage::disk('archivos')->put($nomDocumento, \File::get($avatar));
 
-
             $ve = new BienesInmuebles();
             $ve->codigo = $request->codigo;
             $ve->descripcion = $request->descripcion;
@@ -79,7 +81,10 @@ class BienesInmueblesController extends Controller
             $ve->fechapermuta = $request->fechapermuta;
 
             if($ve->save()) {
-                return ['success' => 2];
+
+                $codigo = BienesInmuebles::max('codigo');
+                $codigo = $codigo + 1;
+                return ['success' => 2, 'codigo' => $codigo];
             }else{
                 return ['success' => 3];
             }
@@ -100,7 +105,9 @@ class BienesInmueblesController extends Controller
             $ve->fechapermuta = $request->fechapermuta;
 
             if($ve->save()) {
-                return ['success' => 2];
+                $codigo = BienesInmuebles::max('codigo');
+                $codigo = $codigo + 1;
+                return ['success' => 2, 'codigo' => $codigo];
             }else{
                 return ['success' => 3];
             }
@@ -118,33 +125,6 @@ class BienesInmueblesController extends Controller
         $nombre = "Documento." . $extension;
 
         return response()->download($pathToFile, $nombre);
-    }
-
-    public function borrarRegistro(Request $request){
-
-        $regla = array(
-            'id' => 'required',
-        );
-
-        $validar = Validator::make($request->all(), $regla);
-
-        if ($validar->fails()){ return ['success' => 0];}
-
-        if($data = BienesInmuebles::where('id', $request->id)->first()){
-
-            $documentoOld = $data->documento;
-
-            BienesInmuebles::where('id', $request->id)->delete();
-
-            // borrar documento
-            if(Storage::disk('archivos')->exists($documentoOld)){
-                Storage::disk('archivos')->delete($documentoOld);
-            }
-
-            return ['success' => 1];
-        }else{
-            return ['success' => 2];
-        }
     }
 
     public function vistaEditarRegistro($id){

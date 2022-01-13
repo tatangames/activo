@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\Calculos;
 
 use App\Http\Controllers\Controller;
+use App\Models\Departamento;
 use Illuminate\Http\Request;
 
 class CalculoDepreciacionController extends Controller
@@ -15,7 +16,18 @@ class CalculoDepreciacionController extends Controller
         return view('backend.admin.calculos.depreciacion.vistadepreciacion');
     }
 
+    public function pdfAnual(){
+        $lista = Departamento::orderBy('id', 'ASC')->get();
 
+        $view =  \View::make('backend.admin.calculos.reporte.pdfanual', compact(['lista']))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view)->setPaper('carta', 'portrait');
 
+        return $pdf->stream();
+    }
+
+    public function pdfCodigo(){
+        return "codigo";
+    }
 
 }

@@ -106,15 +106,15 @@
                                                         @foreach($codcontable as $item)
 
                                                             @if($info->id_codcontable == $item->id)
-                                                                <option value="{{$item->id}}" selected>{{$item->nombre}} {{ $item->codconta }}</option>
+                                                                <option value="{{$item->id}}" selected>{{$item->nombre}} - {{ $item->codconta }}</option>
                                                             @else
-                                                                <option value="{{$item->id}}">{{$item->nombre}} {{ $item->codconta }}</option>
+                                                                <option value="{{$item->id}}">{{$item->nombre}} - {{ $item->codconta }}</option>
                                                             @endif
 
                                                         @endforeach
                                                     @else
 
-                                                        <option value="{{$item->id}}">{{$item->nombre}} {{ $item->codconta }}</option>
+                                                        <option value="{{$item->id}}">{{$item->nombre}} - {{ $item->codconta }}</option>
 
                                                     @endif
 
@@ -136,15 +136,15 @@
                                                         @foreach($coddepreciacion as $item)
 
                                                             @if($info->id_coddepreci == $item->id)
-                                                                <option value="{{$item->id}}" selected>{{$item->nombre}} {{ $item->coddepre }}</option>
+                                                                <option value="{{$item->id}}" selected>{{$item->nombre}} - {{ $item->coddepre }}</option>
                                                             @else
-                                                                <option value="{{$item->id}}">{{$item->nombre}} {{ $item->coddepre }}</option>
+                                                                <option value="{{$item->id}}">{{$item->nombre}} - {{ $item->coddepre }}</option>
                                                             @endif
 
                                                         @endforeach
                                                     @else
 
-                                                        <option value="{{$item->id}}">{{$item->nombre}} {{ $item->coddepre }}</option>
+                                                        <option value="{{$item->id}}">{{$item->nombre}} - {{ $item->coddepre }}</option>
 
                                                     @endif
 
@@ -168,25 +168,17 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-shopping-cart"></i></span>
                                                 </div>
-                                                <select class="form-control" id="select-tipocompra" disabled>
-                                                    <option value="0">------------------</option>
+                                                <select class="form-control" id="select-tipocompra">
 
-                                                    @if($info->valor >= 600)
+                                                    @foreach($tipocompra as $item)
 
-                                                        @foreach($tipocompra as $item)
+                                                        @if($info->id_tipocompra == $item->id)
+                                                            <option value="{{$item->id}}" selected>{{$item->nombre}}</option>
+                                                        @else
+                                                            <option value="{{$item->id}}">{{$item->nombre}}</option>
+                                                        @endif
 
-                                                            @if($info->id_tipocompra == $item->id)
-                                                                <option value="{{$item->id}}" selected>{{$item->nombre}}</option>
-                                                            @else
-                                                                <option value="{{$item->id}}">{{$item->nombre}}</option>
-                                                            @endif
-
-                                                        @endforeach
-                                                    @else
-
-                                                        <option value="{{$item->id}}">{{$item->nombre}}</option>
-
-                                                    @endif
+                                                    @endforeach
 
                                                 </select>
                                             </div>
@@ -309,11 +301,13 @@
         $(document).ready(function(){
             document.getElementById("divcontenedor").style.display = "block";
 
-            var valor = {{ $info->valor }};
+            var valor = 0;
+            @if (!is_null($info->valor))
+                valor = {{ $info->valor }};
+            @endif
 
             if(valor > 600){
                 document.getElementById('select-codcontable').disabled = false;
-                document.getElementById('select-tipocompra').disabled = false;
                 document.getElementById('select-coddepreciacion').disabled = false;
                 document.getElementById('valorresidual').disabled = false;
             }
@@ -345,18 +339,15 @@
 
                 if(valor >= 600){
                     document.getElementById('select-codcontable').disabled = false;
-                    document.getElementById('select-tipocompra').disabled = false;
                     document.getElementById('select-coddepreciacion').disabled = false;
                     document.getElementById('valorresidual').disabled = false;
                 }else{
                     document.getElementById('select-codcontable').disabled = true;
-                    document.getElementById('select-tipocompra').disabled = true;
                     document.getElementById('select-coddepreciacion').disabled = true;
                     document.getElementById('valorresidual').disabled = true;
                 }
             }else{
                 document.getElementById('select-codcontable').disabled = true;
-                document.getElementById('select-tipocompra').disabled = true;
                 document.getElementById('select-coddepreciacion').disabled = true;
                 document.getElementById('valorresidual').disabled = true;
             }
@@ -364,7 +355,7 @@
 
         function verificar(){
             Swal.fire({
-                title: 'Guardar Registro?',
+                title: 'Actualizar Registro?',
                 text: "",
                 icon: 'question',
                 showCancelButton: true,
@@ -398,17 +389,25 @@
             // tendra el mismo id anterior, solo sera sustituido
             // si el valor es mayor a 600
 
-            var valorContable = {{ $info->id_codcontable }};
-            var valorDepre = {{ $info->id_coddepreci }};
+            var valorContable = 0; // Null
+            var valorDepre = 0; // Null
+
+            @if (!is_null($info->id_codcontable))
+                valorContable = {{ $info->id_codcontable }};
+            @endif
+
+            @if (!is_null($info->id_coddepreci))
+                valorDepre = {{ $info->id_coddepreci }};
+            @endif
+
             var datoResidual = {{ $info->valresidual }};
             var valorTipoCompra = {{ $info->id_tipocompra }};
 
-            if(descripcion.length > 0){
-                if(descripcion.length > 2000){
-                    toastr.error('descripción máximo 2000 caracteres');
-                    return;
-                }
+            if(descripcion.length > 2000){
+                toastr.error('descripción máximo 2000 caracteres');
+                return;
             }
+
 
             if(departamento == '0'){
                 toastr.error('Seleccionar departamento');
@@ -419,6 +418,12 @@
                 toastr.error('Seleccionar descriptor');
                 return;
             }
+
+            if(tipocompra == '0'){
+                toastr.error('Seleccionar tipo de compra');
+                return;
+            }
+
 
             var reglaNumeroDecimal = /^[0-9]\d*(\.\d+)?$/;
             var reglaNumeroEntero = /^[0-9]\d*$/;
@@ -446,15 +451,14 @@
                         return;
                     }
 
+                    valorContable = codcontable;
+
                     if(coddepreciacion == '0'){
                         toastr.error('Seleccionar código depreciación');
                         return;
                     }
 
-                    if(tipocompra == '0'){
-                        toastr.error('Seleccionar tipo de compra');
-                        return;
-                    }
+                    valorDepre = coddepreciacion;
 
                     if(valorresidual.length > 0){
                         if(!valorresidual.match(reglaNumeroEntero)) {
@@ -476,7 +480,6 @@
                         datoResidual = valorresidual;
                         valorContable = codcontable;
                         valorDepre = coddepreciacion;
-                        valorTipoCompra = tipocompra;
                     }
                 }
             }
@@ -533,7 +536,7 @@
             formData.append('vidautil', vidautil);
             formData.append('fechacompra', fechacompra);
             formData.append('valorresidual', datoResidual);
-            formData.append('tipocompra', valorTipoCompra);
+            formData.append('tipocompra', tipocompra);
             formData.append('observaciones', observaciones);
 
             axios.post(url+'/bienes/muebles/editar', formData, {

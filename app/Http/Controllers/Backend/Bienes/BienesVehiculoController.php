@@ -103,7 +103,9 @@ class BienesVehiculoController extends Controller
                 $ve->observaciones = $request->observaciones;
                 $ve->codigo = $request->codigo;
                 if($ve->save()) {
-                    return ['success' => 2];
+                    $codigo = BienesVehiculo::max('codigo');
+                    $codigo = $codigo + 1;
+                    return ['success' => 2, 'codigo' => $codigo];
                 }else{
                     return ['success' => 3];
                 }
@@ -132,7 +134,9 @@ class BienesVehiculoController extends Controller
             $ve->codigo = $request->codigo;
 
             if($ve->save()) {
-                return ['success' => 2];
+                $codigo = BienesVehiculo::max('codigo');
+                $codigo = $codigo + 1;
+                return ['success' => 2, 'codigo' => $codigo];
             }else{
                 return ['success' => 3];
             }
@@ -232,33 +236,6 @@ class BienesVehiculoController extends Controller
         $nombre = "Documento." . $extension;
 
         return response()->download($pathToFile, $nombre);
-    }
-
-    public function borrarRegistro(Request $request){
-
-        $regla = array(
-            'id' => 'required',
-        );
-
-        $validar = Validator::make($request->all(), $regla);
-
-        if ($validar->fails()){ return ['success' => 0];}
-
-        if($data = BienesVehiculo::where('id', $request->id)->first()){
-
-            $documentoOld = $data->documento;
-
-            BienesVehiculo::where('id', $request->id)->delete();
-
-            // borrar documento
-            if(Storage::disk('archivos')->exists($documentoOld)){
-                Storage::disk('archivos')->delete($documentoOld);
-            }
-
-            return ['success' => 1];
-        }else{
-            return ['success' => 2];
-        }
     }
 
 

@@ -115,70 +115,70 @@
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.departamento.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte por Departamento</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.inventario.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Inv.</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.comodato.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Comodato</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.descargos.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Descargos</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.ventas.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Ventas</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.donaciones.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Donaciones</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.reevaluos.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Reevaluos</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.descriptor.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte por Descriptor</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.codigo.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte por Códigos</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.repvital.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-file-pdf nav-icon"></i>
                                 <p>Reporte de Rep. Vital</p>
                             </a>

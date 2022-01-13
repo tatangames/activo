@@ -10,6 +10,7 @@ use App\Models\Departamento;
 use App\Models\Descriptor;
 use App\Models\TipoCompra;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -85,19 +86,38 @@ class BienesMueblesController extends Controller
             }
 
             // correlativo
-            $dato = BienesMuebles::where('id_descriptor', $request->coddedescriptor)
-                ->where('id_departamento', $request->departamento)
-                ->max('correlativo');
+            $dato = BienesMuebles::where('id_descriptor', $request->coddedescriptor)->max('correlativo');
+            if($dato != null){
+                $correlativo = $dato + 1;
+            }else{
+                $correlativo = 1;
+            }
 
-            $correlativo = $dato + 1;
+            // posibles null FK
+            if($request->codcontable == 0){
+                $contable = null;
+            }else{
+                $contable = $request->coddepreciacion;
+            }
+
+            if($request->coddepreciacion == 0){
+                $depreciacion = null;
+            }else{
+                $depreciacion = $request->coddepreciacion;
+            }
+
+            $infoDep = Departamento::where('id', $request->departamento)->first();
+            $infoDesc = Descriptor::where('id', $request->coddedescriptor)->first();
+
+            $codigo = $infoDep->codigo . '-' . $infoDesc->codigodes . '-' . $correlativo;
 
             $ve = new BienesMuebles();
             $ve->id_departamento = $request->departamento;
-            $ve->id_codcontable = $request->codcontable;
-            $ve->id_coddepreci = $request->coddepreciacion;
+            $ve->id_codcontable = $contable; // posibles Null
+            $ve->id_coddepreci = $depreciacion; // posibles Null
             $ve->id_descriptor = $request->coddedescriptor;
             $ve->id_tipocompra = $request->tipocompra;
-            $ve->codigo = "";
+            $ve->codigo = $codigo;
             $ve->descripcion = $request->descripcion;
             $ve->valor = $request->valor;
             $ve->fechacompra = $request->fechacompra;
@@ -117,16 +137,38 @@ class BienesMueblesController extends Controller
         }else{
             // correlativo
             $dato = BienesMuebles::where('id_descriptor', $request->coddedescriptor)->max('correlativo');
-            $correlativo = $dato + 1;
+            if($dato != null){
+                $correlativo = $dato + 1;
+            }else{
+                $correlativo = 1;
+            }
+
+            // posibles null FK
+            if($request->codcontable == 0){
+                $contable = null;
+            }else{
+                $contable = $request->coddepreciacion;
+            }
+
+            if($request->coddepreciacion == 0){
+                $depreciacion = null;
+            }else{
+                $depreciacion = $request->coddepreciacion;
+            }
+
+            $infoDep = Departamento::where('id', $request->departamento)->first();
+            $infoDesc = Descriptor::where('id', $request->coddedescriptor)->first();
+
+            $codigo = $infoDep->codigo . '-' . $infoDesc->codigodes . '-' . $correlativo;
 
             // solo guardar datos
             $ve = new BienesMuebles();
             $ve->id_departamento = $request->departamento;
-            $ve->id_codcontable = $request->codcontable;
-            $ve->id_coddepreci = $request->coddepreciacion;
+            $ve->id_codcontable = $contable; // posibles Null
+            $ve->id_coddepreci = $depreciacion; // posibles Null
             $ve->id_descriptor = $request->coddedescriptor;
             $ve->id_tipocompra = $request->tipocompra;
-            $ve->codigo = "";
+            $ve->codigo = $codigo;
             $ve->descripcion = $request->descripcion;
             $ve->valor = $request->valor;
             $ve->fechacompra = $request->fechacompra;
@@ -169,50 +211,6 @@ class BienesMueblesController extends Controller
         return response()->download($pathToFile, $nombre);
     }
 
-    public function borrarRegistro(Request $request){
-
-        $regla = array(
-            'id' => 'required',
-        );
-
-        $validar = Validator::make($request->all(), $regla);
-
-        if ($validar->fails()){ return ['success' => 0];}
-
-        if($data = BienesMuebles::where('id', $request->id)->first()){
-
-            $documentoOld = $data->documento;
-            $facturaOld = $data->factura;
-            $idCorrelativo = $data->id_descriptor;
-
-            BienesMuebles::where('id', $request->id)->delete();
-
-            // actualizar correlativo
-            $correlativo = 0;
-            $info = BienesMuebles::where('id_descriptor', $idCorrelativo)->get();
-            foreach ($info as $ll){
-                $correlativo++;
-
-                BienesMuebles::where('id', $ll->id)->update([
-                    'correlativo' => $correlativo,
-                ]);
-            }
-
-            // borrar documento
-            if(Storage::disk('archivos')->exists($documentoOld)){
-                Storage::disk('archivos')->delete($documentoOld);
-            }
-
-            // borrar factura
-            if(Storage::disk('archivos')->exists($facturaOld)){
-                Storage::disk('archivos')->delete($facturaOld);
-            }
-
-            return ['success' => 1];
-        }else{
-            return ['success' => 2];
-        }
-    }
 
     public function vistaEditarRegistro($id){
         $departamento = Departamento::orderBy('nombre')->get();
@@ -233,8 +231,8 @@ class BienesMueblesController extends Controller
 
             $documentoOld = $infoBien->documento;
             $facturaOld = $infoBien->factura;
-            $iddepa = $infoBien->id_departamento;
             $iddescri = $infoBien->id_descriptor;
+            $correlativo = $infoBien->correlativo;
 
             if($request->hasFile('documento')){
                 $cadena = Str::random(15);
@@ -276,55 +274,41 @@ class BienesMueblesController extends Controller
                 }
             }
 
+            // posibles null FK
+            if($request->codcontable == 0){
+                $contable = null;
+            }else{
+                $contable = $request->coddepreciacion;
+            }
+
+            if($request->coddepreciacion == 0){
+                $depreciacion = null;
+            }else{
+                $depreciacion = $request->coddepreciacion;
+            }
+
+            // obtener correlativo si se cambiara
+            if($iddescri == $request->coddescriptor){
+                // no se actualizara correlativo
+            }else{
+                $correlativo = BienesMuebles::where('id_descriptor', $iddescri)->max('correlativo');
+                $correlativo = $correlativo + 1;
+            }
+
             BienesMuebles::where('id', $request->id)->update([
                 'id_tipocompra' => $request->tipocompra,
-                'id_coddepreci' => $request->coddepreciacion,
-                'id_codcontable' => $request->codcontable,
+                'id_coddepreci' => $depreciacion, // posibles null FK
+                'id_codcontable' => $contable, // posibles null FK
                 'id_descriptor' => $request->coddescriptor,
                 'id_departamento' => $request->departamento,
                 'descripcion' => $request->descripcion,
+                'correlativo' => $correlativo,
                 'valor' => $request->valor,
                 'vidautil' => $request->vidautil,
                 'fechacompra' => $request->fechacompra,
                 'valresidual' => $request->valorresidual,
                 'observaciones' => $request->observaciones,
             ]);
-
-            if($iddepa == $request->departamento &&
-                $iddescri == $request->coddescriptor){
-                // no se actualizara correlativo
-
-            }else{
-                $correlaAntiguo = 0;
-                $correlaNuevo = 0;
-
-                // actualizar anterior id departamento y id descriptor
-                // antiguo
-                $infoAntiguo = BienesMuebles::where('id_descriptor', $iddescri)
-                    ->where('id_departamento', $iddepa)
-                    ->get();
-
-                foreach ($infoAntiguo as $ll){
-                    $correlaAntiguo++;
-
-                    BienesMuebles::where('id', $ll->id)->update([
-                        'correlativo' => $correlaAntiguo,
-                    ]);
-                }
-
-                // actualizar correlativo nuevo
-                $infoNuevo = BienesMuebles::where('id_descriptor', $request->coddescriptor)
-                    ->where('id_departamento', $request->departamento)
-                    ->get();
-
-                foreach ($infoNuevo as $ll){
-                    $correlaNuevo++;
-
-                    BienesMuebles::where('id', $ll->id)->update([
-                        'correlativo' => $correlaNuevo,
-                    ]);
-                }
-            }
 
             return ['success' => 1];
         }else{

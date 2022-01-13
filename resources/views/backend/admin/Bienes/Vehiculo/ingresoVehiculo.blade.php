@@ -258,10 +258,9 @@
                     </div>
 
                 </div>
-                <div class="card-footer">
+                <div class="modal-footer">
                     <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
                 </div>
-
 
             </div>
         </section>
@@ -331,12 +330,11 @@
                 return;
             }
 
-            if(descripcion.length > 0){
-                if(descripcion.length > 5000){
-                    toastr.error('descripción máximo 5000 caracteres');
-                    return;
-                }
+            if(descripcion.length > 5000){
+                toastr.error('descripción máximo 5000 caracteres');
+                return;
             }
+
 
             var reglaNumeroDecimal = /^[0-9]\d*(\.\d+)?$/;
             var reglaNumeroEntero = /^[0-9]\d*$/;
@@ -461,7 +459,7 @@
 
             openLoading();
             var formData = new FormData();
-
+            formData.append('codigo', codigo);
             formData.append('documento', documento.files[0]);
             formData.append('descripcion', descripcion);
             formData.append('valor', valor);
@@ -490,7 +488,7 @@
                     else if(response.data.success === 2){
                         $('#modalAgregar').modal('hide');
                         toastr.success('Registrado correctamente');
-                        limpiarCampos();
+                        limpiarCampos(response.data.codigo);
                     } else{
                         toastr.error('Error al Registrar');
                     }
@@ -501,7 +499,8 @@
                 });
         }
 
-        function limpiarCampos(){
+        function limpiarCampos(codigo){
+            document.getElementById('codigo').value = codigo;
             document.getElementById('descripcion').value = "";
             document.getElementById('valor').value = "";
             document.getElementById('select-departamento').options.selectedIndex = 0;
@@ -517,6 +516,10 @@
             document.getElementById('valorresidual').value = "";
             document.getElementById('observaciones').value = "";
             document.getElementById('documento').value = "";
+        }
+
+        function salir(){
+            window.location.href="{{ url('/admin/bienes/vehiculo/index') }}";
         }
 
     </script>

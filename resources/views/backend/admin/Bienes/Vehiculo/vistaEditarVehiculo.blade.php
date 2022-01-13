@@ -343,12 +343,11 @@
                 return;
             }
 
-            if(descripcion.length > 0){
-                if(descripcion.length > 5000){
-                    toastr.error('descripción máximo 5000 caracteres');
-                    return;
-                }
+            if(descripcion.length > 5000){
+                toastr.error('descripción máximo 5000 caracteres');
+                return;
             }
+
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDecimal = /^[0-9]\d*(\.\d+)?$/;

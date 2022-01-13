@@ -30,7 +30,7 @@
         <div class="container-fluid">
             <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">Listado</h3>
+                    <h3 class="card-title">Listado Bien Mueble</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -86,29 +86,6 @@
             })
         }
 
-        function borrar(id){
-
-            openLoading();
-            var formData = new FormData();
-            formData.append('id', id);
-
-            axios.post(url+'/bienes/muebles/borrar', formData, {
-            })
-                .then((response) => {
-                    closeLoading();
-                    if(response.data.success === 1){
-                        toastr.success('Borrado correctamente');
-                        recargar();
-                    }
-                    else {
-                        toastr.error('Error al borrar');
-                    }
-                })
-                .catch((error) => {
-                    toastr.error('Error al borrar');
-                    closeLoading();
-                });
-        }
 
         function recargar(){
             var ruta = "{{ URL::to('/admin/bienes/muebles/tabla') }}";
