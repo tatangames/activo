@@ -111,7 +111,12 @@
                 return;
             }
 
-            window.open("{{ URL::to('admin/generador/pdf/codigo') }}/" + codigo);
+            if(Date.parse(fechainicio) > Date.parse(fechafinal)){
+                toastr.error('Fecha Inicial no debe ser mayor');
+                return;
+            }
+
+            window.open("{{ URL::to('admin/reporte/pdf/codigo') }}/" + fechainicio + '/' + fechafinal);
         }
 
     </script>

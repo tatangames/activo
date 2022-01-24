@@ -67,7 +67,9 @@ class BienesVehiculoController extends Controller
     public function nuevoBienVehiculo(Request $request){
 
         if(BienesVehiculo::where('codigo', $request->codigo)->first()){
-            return ['success' => 1];
+           // hay datos
+        }else{
+            // no hay datos
         }
 
         if($request->hasFile('documento')){

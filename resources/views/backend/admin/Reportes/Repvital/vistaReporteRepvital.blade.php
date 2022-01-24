@@ -70,8 +70,7 @@
                                     <select class="form-control" id="select-tipo">
                                         <option value="0" disabled selected>Seleccione una opción...</option>
                                         <option value="1">Muebles</option>
-                                        <option value="2">Inmuebles</option>
-                                        <option value="3">Vehículos y Maquinaria</option>
+                                        <option value="2">Vehículos y Maquinaria</option>
                                     </select>
                                 </div>
                             </div>
@@ -130,7 +129,12 @@
                 return;
             }
 
-            window.open("{{ URL::to('admin/generador/pdf/repvital') }}/" + fechainicio + "/" + fechafinal + "/" + valor);
+            if(Date.parse(fechainicio) > Date.parse(fechafinal)){
+                toastr.error('Fecha Inicial no debe ser mayor');
+                return;
+            }
+
+            window.open("{{ URL::to('admin/reporte/pdf/repvital') }}/" + fechainicio + "/" + fechafinal + "/" + valor);
         }
 
     </script>

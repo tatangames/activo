@@ -9,7 +9,6 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-
              <li class="nav-item">
 
                  <a href="#" class="nav-link">
@@ -221,7 +220,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.codigodepreciacion.index') }}" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.reporte.repvital.index') }}" target="frameprincipal" class="nav-link">
                                 <i class="fas fa-clipboard nav-icon"></i>
                                 <p>Código Depreciación</p>
                             </a>

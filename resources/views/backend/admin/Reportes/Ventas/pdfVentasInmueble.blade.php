@@ -88,7 +88,7 @@
         </tr>
     </table>
 </footer>
-<h2 style="text-align: center; font-size: 16px">Comodatos realizadas desde: {{ $f1 }} hasta {{ $f2 }} <br> <br> Bienes Muebles </h2>
+<h2 style="text-align: center; font-size: 16px">Ventas realizadas desde: {{ $f1 }} hasta {{ $f2 }} <br> <br> Bienes Inmuebles </h2>
 @if($haydatos == false)
     <p style="margin-left: 60px; font-size: 18px">No hay Registros en el periodo especificado </p>
 @else
@@ -99,9 +99,8 @@
             <tr>
                 <th style="text-align: center; color: black; font-size:15px; width: 12%">Código</th>
                 <th style="text-align: center; color: black; font-size:15px; width: 20%">Descripción</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 11%">Institución</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 11%">Fecha Compra</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 11%">Valor</th>
+                <th style="text-align: center; color: black; font-size:15px; width: 11%">Fecha</th>
+                <th style="text-align: center; color: black; font-size:15px; width: 11%">Precio</th>
             </tr>
             </thead>
 
@@ -109,9 +108,8 @@
                 <tr>
                     <td style="font-size:13px; text-align: center">{{ $item->codigo }}</td>
                     <td style="font-size:13px; text-align: left">{{ $item->descripcion }}</td>
-                    <td style="font-size:13px; text-align: center">{{ $item->institucion }}</td>
                     <td style="font-size:13px; text-align: center">{{ $item->fecha }}</td>
-                    <td style="font-size:13px; text-align: center">{{ $item->valor }}</td>
+                    <td style="font-size:13px; text-align: center">{{ $item->precio }}</td>
                 </tr>
 
             @endforeach
@@ -126,8 +124,6 @@
             Encargada de Inventario y Activo fijo
         </p>
     </div>
-
-
 
 @endif
 

@@ -88,7 +88,7 @@
         </tr>
     </table>
 </footer>
-<h2 style="text-align: center; font-size: 16px">Comodatos realizadas desde: {{ $f1 }} hasta {{ $f2 }} <br> <br> Bienes Muebles </h2>
+<h2 style="text-align: center; font-size: 16px">Comodatos realizadas desde: {{ $f1 }} hasta {{ $f2 }} <br> <br> Bienes Vehículos y Maquinaria </h2>
 @if($haydatos == false)
     <p style="margin-left: 60px; font-size: 18px">No hay Registros en el periodo especificado </p>
 @else
@@ -126,8 +126,6 @@
             Encargada de Inventario y Activo fijo
         </p>
     </div>
-
-
 
 @endif
 

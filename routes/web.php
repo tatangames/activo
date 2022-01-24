@@ -176,7 +176,7 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
 
     // reevaluos
     Route::get('/admin/reporte/reevaluos/index', [ReportesController::class,'indexReevaluos'])->name('admin.reporte.reevaluos.index');
-    Route::get('/admin/reporte/pdf/reevaluos/{fechainicio}/{fechafinal}/{valor}', [ReportesController::class,'pdfReevaluos']);
+    Route::get('/admin/reporte/pdf/reevaluos/{fechainicio}/{fechafinal}', [ReportesController::class,'pdfReevaluos']);
 
     // descriptor
     Route::get('/admin/reporte/descriptor/index', [ReportesController::class,'indexDescriptor'])->name('admin.reporte.descriptor.index');
@@ -188,7 +188,7 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
 
     // rep vital
     Route::get('/admin/reporte/repvital/index', [ReportesController::class,'indexRepvital'])->name('admin.reporte.repvital.index');
-    Route::get('/admin/reporte/pdf/repvital/{fechainicio}/{fechafinal}', [ReportesController::class,'pdfRevital']);
+    Route::get('/admin/reporte/pdf/repvital/{fechainicio}/{fechafinal}/{valor}', [ReportesController::class,'pdfRevital']);
 
     // --- COMODATO ---
     Route::get('/admin/comodato/index', [ComodatoController::class,'index'])->name('admin.comodato.index');

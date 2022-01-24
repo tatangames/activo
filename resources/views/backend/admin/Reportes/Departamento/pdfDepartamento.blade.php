@@ -105,7 +105,7 @@
                 <td style="font-size:13px; text-align: center">{{ $item->codigo }}</td>
                 <td style="font-size:13px; text-align: left">{{ $item->descripcion }}</td>
                 <td style="font-size:13px; text-align: center">{{ $item->fechacompra }}</td>
-                <td style="font-size:13px; text-align: center">${{ $item->valor }}</td>
+                <td style="font-size:13px; text-align: center">{{ $item->valor }}</td>
             </tr>
 
         @endforeach

@@ -130,7 +130,12 @@
                 return;
             }
 
-            window.open("{{ URL::to('admin/generador/pdf/donaciones') }}/" + fechainicio + "/" + fechafinal + "/" + valor);
+            if(Date.parse(fechainicio) > Date.parse(fechafinal)){
+                toastr.error('Fecha Inicial no debe ser mayor');
+                return;
+            }
+
+            window.open("{{ URL::to('admin/reporte/pdf/donaciones') }}/" + fechainicio + "/" + fechafinal + "/" + valor);
         }
 
     </script>

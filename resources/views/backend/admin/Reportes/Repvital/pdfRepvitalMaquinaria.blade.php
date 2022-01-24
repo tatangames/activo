@@ -68,7 +68,7 @@
         <img src="{{ asset('images/logo2.png') }}" style="float: right" alt="" height="88px" width="71px">
         <img src="{{ asset('images/elsalvador.png') }}" style="float: left" alt="" height="88px" width="86px">
         <p style="text-align: center; font-size: 19px; font-weight: bold;">UNIDAD DE INVENTARIO Y ACTIVO FIJO <br>
-            REPORTE DE INVENTARIO <br> ________________________________</p>
+            REPORTE <br> ________________________________</p>
     </div>
 
 
@@ -88,7 +88,7 @@
         </tr>
     </table>
 </footer>
-<h2 style="text-align: center; font-size: 16px">Comodatos realizadas desde: {{ $f1 }} hasta {{ $f2 }} <br> <br> Bienes Muebles </h2>
+<h2 style="text-align: center; font-size: 16px">Reposicion Vital realizadas desde: {{ $f1}} hasta {{ $f2 }} </h2>
 @if($haydatos == false)
     <p style="margin-left: 60px; font-size: 18px">No hay Registros en el periodo especificado </p>
 @else
@@ -97,21 +97,21 @@
         <table id="tabla" style="width: 95%; margin-top: 30px; margin-bottom: 35px" >
             <thead>
             <tr>
-                <th style="text-align: center; color: black; font-size:15px; width: 12%">Código</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 20%">Descripción</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 11%">Institución</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 11%">Fecha Compra</th>
-                <th style="text-align: center; color: black; font-size:15px; width: 11%">Valor</th>
+                <th style="text-align: center; color: black; font-size:15px; width: 12%">Código del bien</th>
+                <th style="text-align: center; color: black; font-size:15px; width: 12%">Pieza Sust.</th>
+                <th style="text-align: center; color: black; font-size:15px; width: 12%">Pieza Nueva</th>
+                <th style="text-align: center; color: black; font-size:15px; width: 12%">Vida Útil Ag.
+                <th style="text-align: center; color: black; font-size:15px; width: 12%">Fecha</th>
             </tr>
             </thead>
 
             @foreach($lista as $item)
                 <tr>
                     <td style="font-size:13px; text-align: center">{{ $item->codigo }}</td>
-                    <td style="font-size:13px; text-align: left">{{ $item->descripcion }}</td>
-                    <td style="font-size:13px; text-align: center">{{ $item->institucion }}</td>
+                    <td style="font-size:13px; text-align: right">$ {{ $item->piezasustituida }}</td>
+                    <td style="font-size:13px; text-align: right">$ {{ $item->piezanueva }}</td>
+                    <td style="font-size:13px; text-align: center">{{ $item->vidautil	 }}</td>
                     <td style="font-size:13px; text-align: center">{{ $item->fecha }}</td>
-                    <td style="font-size:13px; text-align: center">{{ $item->valor }}</td>
                 </tr>
 
             @endforeach
@@ -126,8 +126,6 @@
             Encargada de Inventario y Activo fijo
         </p>
     </div>
-
-
 
 @endif
 
