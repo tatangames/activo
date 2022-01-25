@@ -40,7 +40,9 @@ class ReportesController extends Controller
 
         $nombre = Departamento::where('id', $id)->pluck('nombre')->first();
 
-        $lista = BienesMuebles::where('id_departamento', $id)->orderBy('id', 'ASC')->get();
+        $lista = BienesMuebles::where('id_departamento', $id)
+            ->where('id_estado', 1) // unicamente en uso
+            ->orderBy('id', 'ASC')->get();
 
         foreach ($lista as $ll){
             $lista->fechacompra = date("d-m-Y", strtotime($ll->fechacompra));
