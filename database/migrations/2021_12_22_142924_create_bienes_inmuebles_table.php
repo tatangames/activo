@@ -15,6 +15,9 @@ class CreateBienesInmueblesTable extends Migration
     {
         Schema::create('bienes_inmuebles', function (Blueprint $table) {
             $table->id();
+
+            $table->bigInteger('id_estado')->unsigned();
+
             $table->integer('codigo')->nullable();
             $table->string('descripcion', 5000);
             $table->decimal('valor', 10, 2)->nullable();
@@ -25,11 +28,10 @@ class CreateBienesInmueblesTable extends Migration
             $table->string('observaciones', 2000)->nullable();
             $table->date('fechacompra')->nullable();
             $table->string('contiene', 800)->nullable();
-            $table->bigInteger('id_estados')->unsigned();
             $table->decimal('edificaciones', 10, 2)->nullable();
             $table->date('fechapermuta')->nullable();
 
-            $table->foreign('id_estados')->references('id')->on('estados');
+            $table->foreign('id_estado')->references('id')->on('estados');
         });
     }
 

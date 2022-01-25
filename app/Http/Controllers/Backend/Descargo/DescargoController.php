@@ -149,7 +149,15 @@ class DescargoController extends Controller
                 $co->observaciones = $request->observaciones;
                 $co->fecha = $request->fecha;
 
-                if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                if($co->save()){
+
+                    // cambiar estado del bien
+                    BienesMuebles::where('id', $request->id)->update([
+                        'id_estado' => 2 // descargado
+                    ]);
+
+                    return ['success' => 2];
+                }else{return ['success' => 3];}
             }else{
                 return ['success' => 1];
             }
@@ -165,7 +173,16 @@ class DescargoController extends Controller
                 $co->observaciones = $request->observaciones;
                 $co->fecha = $request->fecha;
 
-                if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                if($co->save()){
+
+                    // cambiar estado del bien
+                    BienesVehiculo::where('id', $request->id)->update([
+                        'id_estado' => 2 // descargado
+                    ]);
+
+                    return ['success' => 2];
+
+                }else{return ['success' => 3];}
             }else{
                 return ['success' => 1];
             }
@@ -281,7 +298,12 @@ class DescargoController extends Controller
         if ($validar->fails()){ return ['success' => 0];}
 
         if($request->valor == 1){
-            if(DescargoMueble::where('id', $request->id)->first()){
+            if($info = DescargoMueble::where('id', $request->id)->first()){
+
+                // cambiar estado del bien
+                BienesMuebles::where('id', $info->id_bienmueble)->update([
+                    'id_estado' => 1 // en uso
+                ]);
 
                 DescargoMueble::where('id', $request->id)->delete();
 
@@ -291,7 +313,12 @@ class DescargoController extends Controller
             }
         }
         else if($request->valor == 2){
-            if(DescargoMaquinaria::where('id', $request->id)->first()){
+            if($info = DescargoMaquinaria::where('id', $request->id)->first()){
+
+                // cambiar estado del bien
+                BienesVehiculo::where('id', $info->id_bienvehiculo)->update([
+                    'id_estado' => 1 // en uso
+                ]);
 
                 DescargoMaquinaria::where('id', $request->id)->delete();
 
@@ -300,7 +327,12 @@ class DescargoController extends Controller
                 return ['success' => 2];
             }
         }else{
-            if(DescargoMueble::where('id', $request->id)->first()){
+            if($info = DescargoMueble::where('id', $request->id)->first()){
+
+                // cambiar estado del bien
+                BienesMuebles::where('id', $info->id_bienmueble)->update([
+                    'id_estado' => 1 // en uso
+                ]);
 
                 DescargoMueble::where('id', $request->id)->delete();
 
@@ -309,7 +341,6 @@ class DescargoController extends Controller
                 return ['success' => 2];
             }
         }
-
     }
 
     public function sortDate($a, $b){

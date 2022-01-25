@@ -79,6 +79,7 @@ class BienesInmueblesController extends Controller
             $ve->id_estados = $request->estado;
             $ve->edificaciones = $request->edificaciones;
             $ve->fechapermuta = $request->fechapermuta;
+            $ve->id_estado = 1; // es uso
 
             if($ve->save()) {
 
@@ -103,6 +104,7 @@ class BienesInmueblesController extends Controller
             $ve->id_estados = $request->estado;
             $ve->edificaciones = $request->edificaciones;
             $ve->fechapermuta = $request->fechapermuta;
+            $ve->id_estado = 1; // es uso
 
             if($ve->save()) {
                 $codigo = BienesInmuebles::max('codigo');

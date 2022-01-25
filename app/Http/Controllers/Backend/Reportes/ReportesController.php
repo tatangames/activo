@@ -73,14 +73,98 @@ class ReportesController extends Controller
     public function pdfInventarioMuebles($valor){
         // 1: mayor a 600, 2: menor a 600, 3: ver todos
 
+        $total = 0;
+
         if($valor == 1){
-            return "1";
+
+            $lista = BienesMuebles::where('valor', '>=', 600)->orderBy('fechacompra', 'DESC')->get();
+
+            $haydatos = false;
+
+            foreach ($lista as $ll){
+                $haydatos = true;
+
+                $total = $total + $ll->valor;
+
+                if($ll->fechacompra != null) {
+                    $ll->fechacompra = date("d-m-Y", strtotime($ll->fechacompra));
+                }
+
+                if($ll->valor != null){
+                    $ll->valor = '$' . number_format((float)$ll->valor, 2, '.', ',');
+                }else{
+                    $ll->valor = '';
+                }
+            }
+
+            $total = '$' . number_format((float)$total, 2, '.', ',');
+
+            $view =  \View::make('backend.admin.reportes.inventario.pdfmueblemayor600', compact(['lista', 'haydatos', 'total']))->render();
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->getDomPDF()->set_option("enable_php", true);
+            $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+
+            return $pdf->stream();
         }
         else if($valor == 2){
-            return "2";
+            $lista = BienesMuebles::where('valor', '<', 600)->orderBy('fechacompra', 'DESC')->get();
+
+            $haydatos = false;
+
+            foreach ($lista as $ll){
+                $haydatos = true;
+
+                $total = $total + $ll->valor;
+
+                if($ll->fechacompra != null) {
+                    $ll->fechacompra = date("d-m-Y", strtotime($ll->fechacompra));
+                }
+
+                if($ll->valor != null){
+                    $ll->valor = '$' . number_format((float)$ll->valor, 2, '.', ',');
+                }else{
+                    $ll->valor = '';
+                }
+            }
+
+            $total = '$' . number_format((float)$total, 2, '.', ',');
+
+            $view =  \View::make('backend.admin.reportes.inventario.pdfmueblemenor600', compact(['lista', 'haydatos', 'total']))->render();
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->getDomPDF()->set_option("enable_php", true);
+            $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+
+            return $pdf->stream();
         }
         else if($valor == 3){
-            return "3";
+            $lista = BienesMuebles::orderBy('fechacompra', 'DESC')->get();
+
+            $haydatos = false;
+
+            foreach ($lista as $ll){
+                $haydatos = true;
+
+                $total = $total + $ll->valor;
+
+                if($ll->fechacompra != null) {
+                    $ll->fechacompra = date("d-m-Y", strtotime($ll->fechacompra));
+                }
+
+                if($ll->valor != null){
+                    $ll->valor = '$' . number_format((float)$ll->valor, 2, '.', ',');
+                }else{
+                    $ll->valor = '';
+                }
+            }
+
+            $total = '$' . number_format((float)$total, 2, '.', ',');
+
+            $view =  \View::make('backend.admin.reportes.inventario.pdfmuebletodos', compact(['lista', 'haydatos', 'total']))->render();
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->getDomPDF()->set_option("enable_php", true);
+            $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+
+            return $pdf->stream();
         }else{
             return "0";
         }
@@ -89,10 +173,77 @@ class ReportesController extends Controller
     // reporte muebles
     public function pdfInventarioInmuebles(){
 
+        $lista = BienesInmuebles::orderBy('fechacompra', 'DESC')->get();
+
+        $haydatos = false;
+        $total = 0;
+
+        foreach ($lista as $ll){
+            $haydatos = true;
+
+            $total = $total + $ll->valor;
+
+            if($ll->fechacompra != null) {
+                $ll->fechacompra = date("d-m-Y", strtotime($ll->fechacompra));
+            }else{
+                $ll->fechacompra = '00-00-0000';
+            }
+
+            if($ll->valor != null){
+                $ll->valor = '$' . number_format((float)$ll->valor, 2, '.', ',');
+            }else{
+                $ll->valor = '';
+            }
+
+            if($ll->edificaciones != null){
+                $ll->edificaciones = '$' . number_format((float)$ll->edificaciones, 2, '.', ',');
+            }else{
+                $ll->edificaciones = '';
+            }
+        }
+
+        $total = '$' . number_format((float)$total, 2, '.', ',');
+
+        $view =  \View::make('backend.admin.reportes.inventario.pdfinmuebles', compact(['lista', 'haydatos', 'total']))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->getDomPDF()->set_option("enable_php", true);
+        $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+
+        return $pdf->stream();
     }
 
     // reporte maquinaria
     public function pdfInventarioMaquinaria(){
+
+        $lista = BienesVehiculo::orderBy('fechacompra', 'DESC')->get();
+
+        $haydatos = false;
+        $total = 0;
+
+        foreach ($lista as $ll){
+            $haydatos = true;
+
+            $total = $total + $ll->valor;
+
+            if($ll->fechacompra != null) {
+                $ll->fechacompra = date("d-m-Y", strtotime($ll->fechacompra));
+            }else{
+                $ll->fechacompra = '00-00-0000';
+            }
+
+            if($ll->valor != null){
+                $ll->valor = '$' . number_format((float)$ll->valor, 2, '.', ',');
+            }else{
+                $ll->valor = '';
+            }
+        }
+
+        $view =  \View::make('backend.admin.reportes.inventario.pdfmaquinaria', compact(['lista', 'haydatos', 'total']))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->getDomPDF()->set_option("enable_php", true);
+        $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+
+        return $pdf->stream();
 
     }
 

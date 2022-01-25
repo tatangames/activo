@@ -104,6 +104,8 @@ class BienesVehiculoController extends Controller
                 $ve->valresidual = $request->valorresidual;
                 $ve->observaciones = $request->observaciones;
                 $ve->codigo = $request->codigo;
+                $ve->id_estado = 1; // es uso
+
                 if($ve->save()) {
                     $codigo = BienesVehiculo::max('codigo');
                     $codigo = $codigo + 1;
@@ -134,6 +136,7 @@ class BienesVehiculoController extends Controller
             $ve->valresidual = $request->valorresidual;
             $ve->observaciones = $request->observaciones;
             $ve->codigo = $request->codigo;
+            $ve->id_estado = 1; // es uso
 
             if($ve->save()) {
                 $codigo = BienesVehiculo::max('codigo');

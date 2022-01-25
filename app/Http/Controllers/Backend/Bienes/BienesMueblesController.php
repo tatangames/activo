@@ -127,6 +127,7 @@ class BienesMueblesController extends Controller
             $ve->vidautil = $request->vidautil;
             $ve->valresidual = $request->valorresidual;
             $ve->correlativo = $correlativo;
+            $ve->id_estado = 1; // es uso
 
             if($ve->save()) {
                 return ['success' => 1];
@@ -176,7 +177,7 @@ class BienesMueblesController extends Controller
             $ve->vidautil = $request->vidautil;
             $ve->valresidual = $request->valorresidual;
             $ve->correlativo = $correlativo;
-
+            $ve->id_estado = 1; // es uso
             if($ve->save()) {
                 return ['success' => 1];
             }else{

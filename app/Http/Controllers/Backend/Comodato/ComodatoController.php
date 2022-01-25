@@ -204,7 +204,14 @@ class ComodatoController extends Controller
                         $co->id_bienmueble = $info->id;
                         $co->documento = $nomDocumento;
                         $co->fecha = $request->fecha;
-                        if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                        if($co->save()){
+
+                            BienesMuebles::where('id', $info->id)->update([
+                                'id_estado' => 4, // comodato
+                            ]);
+
+                            return ['success' => 2];
+                        }else{return ['success' => 3];}
                     }else{
                         return ['success' => 3];
                     }
@@ -215,7 +222,14 @@ class ComodatoController extends Controller
                     $co->observaciones = $request->observaciones;
                     $co->id_bienmueble = $info->id;
                     $co->fecha = $request->fecha;
-                    if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                    if($co->save()){
+
+                        BienesMuebles::where('id', $info->id)->update([
+                            'id_estado' => 4, // comodato
+                        ]);
+
+                        return ['success' => 2];
+                    }else{return ['success' => 3];}
                 }
 
             }else{
@@ -245,7 +259,14 @@ class ComodatoController extends Controller
                         $co->id_bieninmueble = $info->id;
                         $co->documento = $nomDocumento;
                         $co->fecha = $request->fecha;
-                        if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                        if($co->save()){
+
+                            BienesInmuebles::where('id', $info->id)->update([
+                                'id_estado' => 4, // comodato
+                            ]);
+
+                            return ['success' => 2];
+                        }else{return ['success' => 3];}
                     }else{
                         return ['success' => 3];
                     }
@@ -256,7 +277,15 @@ class ComodatoController extends Controller
                     $co->observaciones = $request->observaciones;
                     $co->id_bieninmueble = $info->id;
                     $co->fecha = $request->fecha;
-                    if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+
+                    if($co->save()){
+
+                        BienesInmuebles::where('id', $info->id)->update([
+                            'id_estado' => 4, // comodato
+                        ]);
+
+                        return ['success' => 2];
+                    }else{return ['success' => 3];}
                 }
 
             }else{
@@ -286,7 +315,14 @@ class ComodatoController extends Controller
                         $co->id_bienvehiculo = $info->id;
                         $co->documento = $nomDocumento;
                         $co->fecha = $request->fecha;
-                        if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                        if($co->save()){
+
+                            BienesVehiculo::where('id', $info->id)->update([
+                                'id_estado' => 4, // comodato
+                            ]);
+
+                            return ['success' => 2];
+                        }else{return ['success' => 3];}
                     }else{
                         return ['success' => 3];
                     }
@@ -297,7 +333,14 @@ class ComodatoController extends Controller
                     $co->observaciones = $request->observaciones;
                     $co->id_bienvehiculo = $info->id;
                     $co->fecha = $request->fecha;
-                    if($co->save()){return ['success' => 2];}else{return ['success' => 3];}
+                    if($co->save()){
+
+                        BienesVehiculo::where('id', $info->id)->update([
+                            'id_estado' => 4, // comodato
+                        ]);
+
+                        return ['success' => 2];
+                    }else{return ['success' => 3];}
                 }
 
             }else{
@@ -615,6 +658,10 @@ class ComodatoController extends Controller
 
                 $documentoOld = $data->documento;
 
+                BienesMuebles::where('id', $data->id_bienmueble)->update([
+                    'id_estado' => 1, // en uso
+                ]);
+
                 ComodatoMueble::where('id', $request->id)->delete();
 
                 // borrar documento
@@ -631,6 +678,10 @@ class ComodatoController extends Controller
             if($data = ComodatoInmueble::where('id', $request->id)->first()){
 
                 $documentoOld = $data->documento;
+
+                BienesInmuebles::where('id', $data->id_bieninmueble)->update([
+                    'id_estado' => 1, // en uso
+                ]);
 
                 ComodatoInmueble::where('id', $request->id)->delete();
 
@@ -649,6 +700,10 @@ class ComodatoController extends Controller
 
                 $documentoOld = $data->documento;
 
+                BienesVehiculo::where('id', $data->id_bienvehiculo)->update([
+                    'id_estado' => 1, // en uso
+                ]);
+
                 ComodatoMaquinaria::where('id', $request->id)->delete();
 
                 // borrar documento
@@ -664,6 +719,10 @@ class ComodatoController extends Controller
             if($data = ComodatoMueble::where('id', $request->id)->first()){
 
                 $documentoOld = $data->documento;
+
+                BienesMuebles::where('id', $data->id_bienmueble)->update([
+                    'id_estado' => 1, // en uso
+                ]);
 
                 ComodatoMueble::where('id', $request->id)->delete();
 

@@ -19,6 +19,7 @@ class CreateBienesVehiculoTable extends Migration
             $table->bigInteger('id_coddepreci')->unsigned();
             $table->bigInteger('id_codcontable')->unsigned();
             $table->bigInteger('id_departamento')->unsigned();
+            $table->bigInteger('id_estado')->unsigned();
 
             $table->string('descripcion', 5000);
             $table->decimal('valor', 10, 2)->nullable();
@@ -39,7 +40,7 @@ class CreateBienesVehiculoTable extends Migration
             $table->foreign('id_coddepreci')->references('id')->on('codigo_depreciacion');
             $table->foreign('id_codcontable')->references('id')->on('codigo_contable');
             $table->foreign('id_departamento')->references('id')->on('departamento');
-
+            $table->foreign('id_estado')->references('id')->on('estados');
         });
     }
 

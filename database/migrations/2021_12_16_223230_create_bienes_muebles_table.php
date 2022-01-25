@@ -20,6 +20,7 @@ class CreateBienesMueblesTable extends Migration
             $table->bigInteger('id_coddepreci')->nullable()->unsigned();
             $table->bigInteger('id_descriptor')->unsigned();
             $table->bigInteger('id_tipocompra')->nullable()->unsigned();
+            $table->bigInteger('id_estado')->unsigned();
 
             $table->string('descripcion', 2000);
             $table->decimal('valor', 10, 2)->nullable();
@@ -37,7 +38,7 @@ class CreateBienesMueblesTable extends Migration
             $table->foreign('id_codcontable')->references('id')->on('codigo_contable');
             $table->foreign('id_departamento')->references('id')->on('departamento');
             $table->foreign('id_tipocompra')->references('id')->on('tipo_compra');
-
+            $table->foreign('id_estado')->references('id')->on('estados');
         });
     }
 
