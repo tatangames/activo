@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend\Sustitucion;
 use App\Http\Controllers\Controller;
 use App\Models\BienesMuebles;
 use App\Models\BienesVehiculo;
+use App\Models\HistorialdaMaquinaria;
+use App\Models\HistorialdaMueble;
 use App\Models\SustitucionMaquinaria;
 use App\Models\SustitucionMueble;
 use Illuminate\Http\Request;
@@ -156,14 +158,43 @@ class SustitucionController extends Controller
                     $estado = Storage::disk('archivos')->put($nomDocumento, \File::get($avatar));
 
                     if($estado){
+
+                        $fechaanterior = intval(substr($request->fecha,0,4));
+
+                        $repanterioresConteo = SustitucionMueble::where('id_bienmueble', $request->id)->count();
+                        $repanteriores = SustitucionMueble::where('id_bienmueble', $request->id)->get();
+                        $pnueva = 0;
+                        $psus = 0;
+                        if($repanterioresConteo > 0){
+                            foreach($repanteriores as $v){
+                                $pnueva = $pnueva + floatval($v->piezanueva);
+                                $psus = $psus + floatval($v->piezasustituida);
+                            }
+                            $valorbien = $info->valor + $pnueva - $psus;
+                        }
+                        else{
+                            $valorbien = $info->valor;
+                        }
+
+                        if($depacum = HistorialdaMueble::where('id_bienmueble', $request->id)
+                            ->where('anio', '<', $fechaanterior)
+                            ->where('depacumulada', '!=', 0)
+                            ->orderBy('id', 'DESC')
+                            ->take(1)
+                            ->first()){
+                            $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                        }else{
+                            $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                        }
+
                         $co = new SustitucionMueble();
                         $co->id_bienmueble = $info->id;
 
                         $co->piezasustituida = $request->piezasustituida;
-                        $co->valorajustado = $request->valorajustado;
                         $co->piezanueva = $request->piezanueva;
                         $co->vidautil = $request->vidautil;
                         $co->observaciones = $request->observaciones;
+                        $co->valorajustado = $valorajustado;
                         $co->fecha = $request->fecha;
                         $co->documento = $nomDocumento;
 
@@ -173,13 +204,40 @@ class SustitucionController extends Controller
                     }
 
                 }else{
+                    $fechaanterior = intval(substr($request->fecha,0,4));
+
+                    $repanterioresConteo = SustitucionMueble::where('id_bienmueble', $request->id)->count();
+                    $repanteriores = SustitucionMueble::where('id_bienmueble', $request->id)->get();
+                    $pnueva = 0;
+                    $psus = 0;
+                    if($repanterioresConteo > 0){
+                        foreach($repanteriores as $v){
+                            $pnueva = $pnueva + floatval($v->piezanueva);
+                            $psus = $psus + floatval($v->piezasustituida);
+                        }
+                        $valorbien = $info->valor + $pnueva - $psus;
+                    }
+                    else{
+                        $valorbien = $info->valor;
+                    }
+
+                    if($depacum = HistorialdaMueble::where('id_bienmueble', $request->id)
+                        ->where('anio', '<', $fechaanterior)
+                        ->where('depacumulada', '!=', 0)
+                        ->orderBy('id', 'DESC')
+                        ->take(1)
+                        ->first()){
+                        $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                    }else{
+                        $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                    }
+
                     $co = new SustitucionMueble();
                     $co->id_bienmueble = $info->id;
-
                     $co->piezasustituida = $request->piezasustituida;
-                    $co->valorajustado = $request->valorajustado;
                     $co->piezanueva = $request->piezanueva;
                     $co->vidautil = $request->vidautil;
+                    $co->valorajustado = $valorajustado;
                     $co->observaciones = $request->observaciones;
                     $co->fecha = $request->fecha;
 
@@ -207,13 +265,41 @@ class SustitucionController extends Controller
                     $estado = Storage::disk('archivos')->put($nomDocumento, \File::get($avatar));
 
                     if($estado){
+
+                        $fechaanterior = intval(substr($request->fecha,0,4));
+
+                        $repanterioresConteo = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->count();
+                        $repanteriores = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->get();
+                        $pnueva = 0;
+                        $psus = 0;
+                        if($repanterioresConteo > 0){
+                            foreach($repanteriores as $v){
+                                $pnueva = $pnueva + floatval($v->piezanueva);
+                                $psus = $psus + floatval($v->piezasustituida);
+                            }
+                            $valorbien = $info->valor + $pnueva - $psus;
+                        }
+                        else{
+                            $valorbien = $info->valor;
+                        }
+
+                        if($depacum = HistorialdaMaquinaria::where('id_bienvehiculo', $request->id)
+                            ->where('anio', '<', $fechaanterior)
+                            ->where('depacumulada', '!=', 0)
+                            ->orderBy('id', 'DESC')
+                            ->take(1)
+                            ->first()){
+                            $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                        }else{
+                            $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                        }
+
                         $co = new SustitucionMaquinaria();
                         $co->id_bienvehiculo = $info->id;
-
                         $co->piezasustituida = $request->piezasustituida;
-                        $co->valorajustado = $request->valorajustado;
                         $co->piezanueva = $request->piezanueva;
                         $co->vidautil = $request->vidautil;
+                        $co->valorajustado = $valorajustado;
                         $co->observaciones = $request->observaciones;
                         $co->fecha = $request->fecha;
                         $co->documento = $nomDocumento;
@@ -224,11 +310,39 @@ class SustitucionController extends Controller
                     }
 
                 }else{
+
+                    $fechaanterior = intval(substr($request->fecha,0,4));
+
+                    $repanterioresConteo = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->count();
+                    $repanteriores = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->get();
+                    $pnueva = 0;
+                    $psus = 0;
+                    if($repanterioresConteo > 0){
+                        foreach($repanteriores as $v){
+                            $pnueva = $pnueva + floatval($v->piezanueva);
+                            $psus = $psus + floatval($v->piezasustituida);
+                        }
+                        $valorbien = $info->valor + $pnueva - $psus;
+                    }
+                    else{
+                        $valorbien = $info->valor;
+                    }
+
+                    if($depacum = HistorialdaMaquinaria::where('id_bienvehiculo', $request->id)
+                        ->where('anio', '<', $fechaanterior)
+                        ->where('depacumulada', '!=', 0)
+                        ->orderBy('id', 'DESC')
+                        ->take(1)
+                        ->first()){
+                        $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                    }else{
+                        $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                    }
+
                     $co = new SustitucionMaquinaria();
                     $co->id_bienvehiculo = $info->id;
-
+                    $co->valorajustado = $valorajustado;
                     $co->piezasustituida = $request->piezasustituida;
-                    $co->valorajustado = $request->valorajustado;
                     $co->piezanueva = $request->piezanueva;
                     $co->vidautil = $request->vidautil;
                     $co->observaciones = $request->observaciones;
@@ -318,12 +432,41 @@ class SustitucionController extends Controller
 
                         if($estado){
 
+                            $fechaanterior = intval(substr($request->fecha,0,4));
+
+                            $repanterioresConteo = SustitucionMueble::where('id_bienmueble', $request->id)->count();
+                            $repanteriores = SustitucionMueble::where('id_bienmueble', $request->id)->get();
+                            $pnueva = 0;
+                            $psus = 0;
+                            if($repanterioresConteo > 0){
+                                foreach($repanteriores as $v){
+                                    $pnueva = $pnueva + floatval($v->piezanueva);
+                                    $psus = $psus + floatval($v->piezasustituida);
+                                }
+                                $valorbien = $info->valor + $pnueva - $psus;
+                            }
+                            else{
+                                $valorbien = $info->valor;
+                            }
+
+                            if($depacum = HistorialdaMueble::where('id_bienmueble', $request->id)
+                                ->where('anio', '<', $fechaanterior)
+                                ->where('depacumulada', '!=', 0)
+                                ->orderBy('id', 'DESC')
+                                ->take(1)
+                                ->first()){
+                                $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                            }else{
+                                $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                            }
+
+
                             SustitucionMueble::where('id', $request->id)->update([
                                 'id_bienmueble' => $info->id,
                                 'piezasustituida' => $request->piezasustituida,
-                                'valorajustado' =>$request->valorajustado,
                                 'piezanueva' => $request->piezanueva,
                                 'vidautil' => $request->vidautil,
+                                'valorajustado' => $valorajustado,
                                 'observaciones' => $request->observaciones,
                                 'fecha' => $request->fecha,
                                 'documento' => $nomDocumento
@@ -340,11 +483,39 @@ class SustitucionController extends Controller
 
                     }else{
 
+                        $fechaanterior = intval(substr($request->fecha,0,4));
+
+                        $repanterioresConteo = SustitucionMueble::where('id_bienmueble', $request->id)->count();
+                        $repanteriores = SustitucionMueble::where('id_bienmueble', $request->id)->get();
+                        $pnueva = 0;
+                        $psus = 0;
+                        if($repanterioresConteo > 0){
+                            foreach($repanteriores as $v){
+                                $pnueva = $pnueva + floatval($v->piezanueva);
+                                $psus = $psus + floatval($v->piezasustituida);
+                            }
+                            $valorbien = $info->valor + $pnueva - $psus;
+                        }
+                        else{
+                            $valorbien = $info->valor;
+                        }
+
+                        if($depacum = HistorialdaMueble::where('id_bienmueble', $request->id)
+                            ->where('anio', '<', $fechaanterior)
+                            ->where('depacumulada', '!=', 0)
+                            ->orderBy('id', 'DESC')
+                            ->take(1)
+                            ->first()){
+                            $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                        }else{
+                            $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                        }
+
                         SustitucionMueble::where('id', $request->id)->update([
                             'id_bienmueble' => $info->id,
                             'piezasustituida' => $request->piezasustituida,
-                            'valorajustado' =>$request->valorajustado,
                             'piezanueva' => $request->piezanueva,
+                            'valorajustado' => $valorajustado,
                             'vidautil' => $request->vidautil,
                             'observaciones' => $request->observaciones,
                             'fecha' => $request->fecha,
@@ -382,10 +553,38 @@ class SustitucionController extends Controller
 
                         if($estado){
 
+                            $fechaanterior = intval(substr($request->fecha,0,4));
+
+                            $repanterioresConteo = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->count();
+                            $repanteriores = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->get();
+                            $pnueva = 0;
+                            $psus = 0;
+                            if($repanterioresConteo > 0){
+                                foreach($repanteriores as $v){
+                                    $pnueva = $pnueva + floatval($v->piezanueva);
+                                    $psus = $psus + floatval($v->piezasustituida);
+                                }
+                                $valorbien = $info->valor + $pnueva - $psus;
+                            }
+                            else{
+                                $valorbien = $info->valor;
+                            }
+
+                            if($depacum = HistorialdaMaquinaria::where('id_bienvehiculo', $request->id)
+                                ->where('anio', '<', $fechaanterior)
+                                ->where('depacumulada', '!=', 0)
+                                ->orderBy('id', 'DESC')
+                                ->take(1)
+                                ->first()){
+                                $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                            }else{
+                                $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                            }
+
                             SustitucionMaquinaria::where('id', $request->id)->update([
                                 'id_bienvehiculo' => $info->id,
                                 'piezasustituida' => $request->piezasustituida,
-                                'valorajustado' =>$request->valorajustado,
+                                'valorajustado' =>$valorajustado,
                                 'piezanueva' => $request->piezanueva,
                                 'vidautil' => $request->vidautil,
                                 'observaciones' => $request->observaciones,
@@ -404,10 +603,39 @@ class SustitucionController extends Controller
 
                     }else{
 
+                        $fechaanterior = intval(substr($request->fecha,0,4));
+
+                        $repanterioresConteo = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->count();
+                        $repanteriores = SustitucionMaquinaria::where('id_bienvehiculo', $request->id)->get();
+                        $pnueva = 0;
+                        $psus = 0;
+                        if($repanterioresConteo > 0){
+                            foreach($repanteriores as $v){
+                                $pnueva = $pnueva + floatval($v->piezanueva);
+                                $psus = $psus + floatval($v->piezasustituida);
+                            }
+                            $valorbien = $info->valor + $pnueva - $psus;
+                        }
+                        else{
+                            $valorbien = $info->valor;
+                        }
+
+                        if($depacum = HistorialdaMaquinaria::where('id_bienvehiculo', $request->id)
+                            ->where('anio', '<', $fechaanterior)
+                            ->where('depacumulada', '!=', 0)
+                            ->orderBy('id', 'DESC')
+                            ->take(1)
+                            ->first()){
+
+                            $valorajustado = round(floatval($valorbien) - floatval($depacum->depacumulada) - floatval($request->piezasustituida),2);
+                        }else{
+                            $valorajustado = round(floatval($valorbien) - floatval(0) - floatval($request->piezasustituida),2);
+                        }
+
                         SustitucionMaquinaria::where('id', $request->id)->update([
                             'id_bienvehiculo' => $info->id,
                             'piezasustituida' => $request->piezasustituida,
-                            'valorajustado' =>$request->valorajustado,
+                            'valorajustado' =>$valorajustado,
                             'piezanueva' => $request->piezanueva,
                             'vidautil' => $request->vidautil,
                             'observaciones' => $request->observaciones,
@@ -426,67 +654,7 @@ class SustitucionController extends Controller
 
         }
         else{
-            // defecto bien mueble
-            if($info = BienesVehiculo::where('id', $request->idbien)->first()){
-                if($data = SustitucionMueble::where('id', $request->id)->first()){
-
-                    if($request->hasFile('documento')){
-
-                        $documentoOld = $data->documento;
-
-                        $cadena = Str::random(15);
-                        $tiempo = microtime();
-                        $union = $cadena.$tiempo;
-                        $nombre = str_replace(' ', '_', $union);
-
-                        $extension = '.'.$request->documento->getClientOriginalExtension();
-                        $nomDocumento = $nombre.strtolower($extension);
-                        $avatar = $request->file('documento');
-                        $estado = Storage::disk('archivos')->put($nomDocumento, \File::get($avatar));
-
-                        if($estado){
-
-                            SustitucionMueble::where('id', $request->id)->update([
-                                'id_bienmueble' => $info->id,
-                                'piezasustituida' => $request->piezasustituida,
-                                'valorajustado' =>$request->valorajustado,
-                                'piezanueva' => $request->piezanueva,
-                                'vidautil' => $request->vidautil,
-                                'observaciones' => $request->observaciones,
-                                'fecha' => $request->fecha,
-                                'documento' => $nomDocumento
-                            ]);
-
-                            if(Storage::disk('archivos')->exists($documentoOld)){
-                                Storage::disk('archivos')->delete($documentoOld);
-                            }
-
-                            return ['success' => 2];
-                        }else{
-                            return ['success' => 3];
-                        }
-
-                    }else{
-
-                        SustitucionMueble::where('id', $request->id)->update([
-                            'id_bienmueble' => $info->id,
-                            'piezasustituida' => $request->piezasustituida,
-                            'valorajustado' =>$request->valorajustado,
-                            'piezanueva' => $request->piezanueva,
-                            'vidautil' => $request->vidautil,
-                            'observaciones' => $request->observaciones,
-                            'fecha' => $request->fecha,
-                        ]);
-
-                        return ['success' => 2];
-                    }
-
-                }else{
-                    return ['success' => 3];
-                }
-            }else{
-                return ['success' => 1];
-            }
+            return ['success' => 1];
         }
     }
 

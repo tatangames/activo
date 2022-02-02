@@ -28,7 +28,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Registro de Reposición Vital</h1>
+                    <h1>Registro de Sustitución</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -74,7 +74,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Pieza Sustituida:</label>
+                                <label class="col-sm-2 col-form-label">Valor de la pieza sustituida:</label>
 
                                 <div class="col-sm-3">
                                     <input type="number" value="0.00" class="form-control" id="piezasustituida">
@@ -82,15 +82,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Valor Ajustado:</label>
-
-                                <div class="col-sm-3">
-                                    <input type="number" value="0.00" class="form-control" id="valorajustado">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Pieza Nueva:</label>
+                                <label class="col-sm-2 col-form-label">Valor de la pieza Nueva:</label>
 
                                 <div class="col-sm-3">
                                     <input type="number" value="0.00" class="form-control" id="piezanueva">
@@ -98,7 +90,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Vida Útil (Años):</label>
+                                <label class="col-sm-2 col-form-label">Vida Util agregada (Años):</label>
 
                                 <div class="col-sm-3">
                                     <input type="number" value="0" class="form-control" id="vidautil">
@@ -266,7 +258,6 @@
             var tipo = document.getElementById("select-tipo").value;
 
             var piezasustituida = document.getElementById("piezasustituida").value;
-            var valorajustado = document.getElementById("valorajustado").value;
             var piezanueva = document.getElementById("piezanueva").value;
             var vidautil = document.getElementById("vidautil").value;
             var fecha = document.getElementById("fecha").value;
@@ -299,23 +290,6 @@
                 }
             }
 
-            if(valorajustado.length > 0){
-
-                if(!valorajustado.match(reglaNumeroDecimal)) {
-                    toastr.error('Valor Ajustado debe ser número Decimal');
-                    return;
-                }
-
-                if(valorajustado < 0){
-                    toastr.error('Valor Ajustado no permite números negativos');
-                    return;
-                }
-
-                if(valorajustado.length > 9){
-                    toastr.error('Valor Ajustado máximo 9 digitos de límite');
-                    return;
-                }
-            }
 
             if(piezanueva.length > 0){
 
@@ -372,7 +346,6 @@
             formData.append('tipo', tipo);
 
             formData.append('piezasustituida', piezasustituida);
-            formData.append('valorajustado', valorajustado);
             formData.append('piezanueva', piezanueva);
             formData.append('vidautil', vidautil);
             formData.append('documento', documento.files[0]);
@@ -383,6 +356,7 @@
             axios.post(url+'/sustitucion/nuevo', formData, {
             })
                 .then((response) => {
+
                     closeLoading();
 
                     if(response.data.success === 1){

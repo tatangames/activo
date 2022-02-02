@@ -137,8 +137,12 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
 
     // --- CALCULOS DEPRECIACION ---
     Route::get('/admin/calculos/depreciacion/index', [CalculoDepreciacionController::class,'index'])->name('admin.calculos.depreciacion.index');
-    Route::get('/admin/generador/pdf/anual/{anio}', [CalculoDepreciacionController::class,'pdfAnual']);
-    Route::get('/admin/generador/pdf/codigo/{code}', [CalculoDepreciacionController::class,'pdfCodigo']);
+
+    // verificar existe codigo bienes muebles o maquinaria
+    Route::post('/admin/verificar/existe-codigo', [CalculoDepreciacionController::class, 'verificarCodigo']);
+    Route::get('/admin/reporte/codigo-bien/{code}', [CalculoDepreciacionController::class,'indexReporteCodigo']);
+
+    Route::post('/admin/guardar/historiada/mueble', [CalculoDepreciacionController::class, 'guardarHistorialdaMueble']);
 
 
     // --- REPORTES VARIOS ---

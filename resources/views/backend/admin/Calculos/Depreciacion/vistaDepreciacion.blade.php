@@ -85,14 +85,14 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-2 col-form-label">Año</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="anio-bloque1" maxlength="10">
+                                                    <input type="text" class="form-control" id="anio-bloque1">
                                                 </div>
                                             </div>
 
                                         </div>
 
                                         <div class="card-footer">
-                                            <button type="button" onclick="generarBloque1()" class="btn btn-success">Generar</button>
+                                            <button type="button" onclick="generarBloque1()" class="btn btn-success">Buscar</button>
                                             <button type="button" onclick="cancelar()" class="btn btn-default float-right">Cancelar</button>
                                         </div>
 
@@ -128,14 +128,14 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-2 col-form-label">Código del bien:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="codigo-bloque2" maxlength="20">
+                                                    <input type="text" class="form-control" id="codigo-bloque2" value="UIN-49-96-1">
                                                 </div>
                                             </div>
 
                                         </div>
 
                                         <div class="card-footer">
-                                            <button type="button" onclick="generarBloque2()" class="btn btn-success">Generar</button>
+                                            <button type="button" onclick="generarBloque2()" class="btn btn-success">Buscar</button>
                                             <button type="button" onclick="cancelar()" class="btn btn-default float-right">Cancelar</button>
                                         </div>
 
@@ -218,7 +218,41 @@
                 return;
             }
 
-            window.open("{{ URL::to('admin/generador/pdf/codigo') }}/" + codigo);
+            openLoading();
+            var formData = new FormData();
+            formData.append('codigo', codigo);
+
+            axios.post(url+'/verificar/existe-codigo', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+                       // encontrado
+                        window.location.href="{{ url('/admin/reporte/codigo-bien/') }}/" + codigo;
+                    }
+                    else {
+                        // no encontrado
+                        msjNoEncontrado();
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+        function msjNoEncontrado(){
+            Swal.fire({
+                title: 'Código No encontrado',
+                text: '',
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonColor: '#28a745',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                }
+            });
         }
 
         function ocultarPrincipal(){
