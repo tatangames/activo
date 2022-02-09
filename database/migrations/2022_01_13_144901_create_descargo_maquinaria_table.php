@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateDescargoMaquinariaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de descargo de maquinaria
      *
      * @return void
      */

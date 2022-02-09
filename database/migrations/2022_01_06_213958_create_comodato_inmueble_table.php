@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateComodatoInmuebleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de comodatos inmuebles
      *
      * @return void
      */

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateBienesInmueblesTable extends Migration
 {
     /**
-     * Run the migrations.
+     * bienes inmuebles
      *
      * @return void
      */
@@ -19,16 +19,16 @@ class CreateBienesInmueblesTable extends Migration
             $table->bigInteger('id_estado')->unsigned();
 
             $table->integer('codigo')->nullable();
-            $table->string('descripcion', 5000);
-            $table->decimal('valor', 10, 2)->nullable();
-            $table->string('ubicacion', 1000)->nullable();
+            $table->text('descripcion');
+            $table->decimal('valor', 15, 2)->nullable();
+            $table->text('ubicacion')->nullable();
             $table->string('documento', 100)->nullable();
             $table->string('inscrito', 100)->nullable();
-            $table->decimal('valorregistrado', 10, 2)->nullable();
-            $table->string('observaciones', 2000)->nullable();
+            $table->decimal('valorregistrado', 15, 2)->nullable();
+            $table->text('observaciones')->nullable();
             $table->date('fechacompra')->nullable();
-            $table->string('contiene', 800)->nullable();
-            $table->decimal('edificaciones', 10, 2)->nullable();
+            $table->text('contiene')->nullable();
+            $table->decimal('edificaciones', 15, 2)->nullable();
             $table->date('fechapermuta')->nullable();
 
             $table->foreign('id_estado')->references('id')->on('estados');

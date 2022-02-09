@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateDonacionMuebleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * listado de donaciones
      *
      * @return void
      */

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateBienesMueblesTable extends Migration
 {
     /**
-     * Run the migrations.
+     * bienes muebles
      *
      * @return void
      */
@@ -23,13 +23,13 @@ class CreateBienesMueblesTable extends Migration
             $table->bigInteger('id_estado')->unsigned();
 
             $table->string('descripcion', 2000);
-            $table->decimal('valor', 10, 2)->nullable();
+            $table->decimal('valor', 15, 2)->nullable();
             $table->date('fechacompra')->nullable();
             $table->string('documento', 100)->nullable();
             $table->string('factura', 100)->nullable();
             $table->text('observaciones')->nullable();
             $table->integer('vidautil')->nullable();
-            $table->integer('valresidual')->nullable();
+            $table->decimal('valresidual', 15, 2)->nullable();
             $table->integer('correlativo');
             $table->string('codigo', 20)->nullable();
 

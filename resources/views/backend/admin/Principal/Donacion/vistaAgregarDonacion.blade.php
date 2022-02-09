@@ -53,7 +53,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Tipo de Bien:</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" id="select-tipo">
+                                        <select class="form-control" id="select-tipo" onchange="setearDescripcion()">
                                             <option value="0" disabled selected>Seleccione una opción...</option>
                                             <option value="1">Muebles</option>
                                             <option value="2">Inmuebles</option>
@@ -356,6 +356,11 @@
 
                 }
             });
+        }
+
+        function setearDescripcion(){
+            document.getElementById("descripcion").value = '';
+            idGlobalBienVenta = 0;
         }
 
     </script>

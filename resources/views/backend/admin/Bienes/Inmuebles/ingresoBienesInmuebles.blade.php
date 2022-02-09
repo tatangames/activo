@@ -52,7 +52,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Código</label>
+                                            <label>Código *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -92,7 +92,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Inscrito</label>
+                                            <label># de Inscripción CNR:</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -151,20 +151,6 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Estado</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-eye"></i></span>
-                                                </div>
-                                                <select class="form-control" id="select-estado">
-                                                    @foreach($estados as $item)
-                                                        <option value="{{$item->id}}">{{$item->nombre}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
                                             <label>Edificaciones</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -202,10 +188,10 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" onclick="salir()" class="btn btn-default">Salir</button>
+                    <button type="button" onclick="verificar()" class="btn btn-success">Guardar</button>
                 </div>
-
 
             </div>
         </section>
@@ -260,13 +246,17 @@
             var observaciones = document.getElementById('observaciones').value;
             var fechacompra = document.getElementById('fechacompra').value;
             var contiene = document.getElementById('contiene').value;
-            var estado = document.getElementById('select-estado').value;
             var edificaciones = document.getElementById('edificaciones').value;
             var fechapermuta = document.getElementById('fechapermuta').value;
             var documento = document.getElementById('documento');
 
             if(codigo === ''){
                 toastr.error('código es requerido');
+                return;
+            }
+
+            if(descripcion === ''){
+                toastr.error('Descripción es requerida');
                 return;
             }
 
@@ -288,10 +278,12 @@
                     return;
                 }
 
-                if (valor.length > 9) {
-                    toastr.error('valor máximo 9 digitos de límite');
+                if (valor.length > 10) {
+                    toastr.error('valor máximo 10 digitos de límite');
                     return;
                 }
+            }else{
+                valor = 0;
             }
 
             if(ubicacion.length > 0){
@@ -309,7 +301,7 @@
             }
 
             if(valorregistrado.length > 0) {
-                if (!valor.match(reglaNumeroDecimal)) {
+                if (!valorregistrado.match(reglaNumeroDecimal)) {
                     toastr.error('valor registrado debe ser número Decimal');
                     return;
                 }
@@ -319,10 +311,12 @@
                     return;
                 }
 
-                if (valorregistrado.length > 9) {
-                    toastr.error('valor registrado máximo 9 digitos de límite');
+                if (valorregistrado.length > 10) {
+                    toastr.error('valor registrado máximo 10 digitos de límite');
                     return;
                 }
+            }else{
+                valorregistrado = 0;
             }
 
             if(observaciones.length > 0){
@@ -334,13 +328,13 @@
 
             if(contiene.length > 0){
                 if(contiene.length > 800){
-                    toastr.error('contiene debe llevar máximo 800 caracteres');
+                    toastr.error('Contiene debe llevar máximo 800 caracteres');
                     return;
                 }
             }
 
             if(edificaciones.length > 0) {
-                if (!valor.match(reglaNumeroDecimal)) {
+                if (!edificaciones.match(reglaNumeroDecimal)) {
                     toastr.error('edificaciones debe ser número Decimal');
                     return;
                 }
@@ -350,10 +344,12 @@
                     return;
                 }
 
-                if (edificaciones.length > 9) {
-                    toastr.error('edificaciones máximo 9 digitos de límite');
+                if (edificaciones.length > 10) {
+                    toastr.error('edificaciones máximo 10 digitos de límite');
                     return;
                 }
+            }else{
+                edificaciones = 0;
             }
 
 
@@ -376,7 +372,6 @@
             formData.append('observaciones', observaciones);
             formData.append('fechacompra', fechacompra);
             formData.append('contiene', contiene);
-            formData.append('estado', estado);
             formData.append('edificaciones', edificaciones);
             formData.append('fechapermuta', fechapermuta);
 
@@ -411,7 +406,6 @@
             document.getElementById('observaciones').value = "";
             document.getElementById('fechacompra').value = "";
             document.getElementById('contiene').value = "";
-            document.getElementById('select-estado').options.selectedIndex = 0;
             document.getElementById('edificaciones').value = "";
             document.getElementById('fechapermuta').value = "";
             document.getElementById('documento').value = "";

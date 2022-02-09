@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateBienesVehiculoTable extends Migration
 {
     /**
-     * Run the migrations.
+     * bienes vehiculos
      *
      * @return void
      */
@@ -22,7 +22,7 @@ class CreateBienesVehiculoTable extends Migration
             $table->bigInteger('id_estado')->unsigned();
 
             $table->string('descripcion', 5000);
-            $table->decimal('valor', 10, 2)->nullable();
+            $table->decimal('valor', 15, 2)->nullable();
             $table->string('placa', 50)->nullable();
             $table->string('motorista', 150)->nullable();
             $table->integer('vidautil')->nullable();
@@ -30,7 +30,7 @@ class CreateBienesVehiculoTable extends Migration
             $table->integer('anio')->nullable();
             $table->date('fechavectar')->nullable();
             $table->string('encargado', 150)->nullable();
-            $table->integer('valresidual')->nullable();
+            $table->decimal('valresidual', 15, 2)->nullable();
             $table->string('observaciones', 2000)->nullable();
 
             $table->integer('codigo')->nullable();

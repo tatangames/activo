@@ -96,7 +96,8 @@ class TrasladoController extends Controller
                 if(!empty($row)){
                     $tiene = false;
                     $output .= '
-                 <li onclick="modificarValor('.$row->id.','.$row->id_departamento.')"><a href="#">'.$row->descripcion.'</a></li>
+                 <li onclick="modificarValor('.$row->id.','.$row->id_departamento.')"><a href="#">'. $row->descripcion.'</a></li>
+                  <hr>
                 ';
                 }
             }

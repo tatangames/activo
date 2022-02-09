@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateDepartamentoTable extends Migration
 {
     /**
-     * Run the migrations.
+     * unidades o departamentos
      *
      * @return void
      */

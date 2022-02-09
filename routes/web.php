@@ -144,6 +144,14 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
 
     Route::post('/admin/guardar/historiada/mueble', [CalculoDepreciacionController::class, 'guardarHistorialdaMueble']);
 
+    Route::get('/admin/calculo/mueble/pdf/{id}', [CalculoDepreciacionController::class,'pdfCalculoBienMueble']);
+    Route::get('/admin/calculo/maquinaria/pdf/{id}', [CalculoDepreciacionController::class,'pdfCalculoBienMaquinaria']);
+
+    Route::get('/admin/reporte/pdf/calculo-anual/{anio}', [CalculoDepreciacionController::class,'pdfCalculoAnual']);
+
+
+
+
 
     // --- REPORTES VARIOS ---
     // departamento

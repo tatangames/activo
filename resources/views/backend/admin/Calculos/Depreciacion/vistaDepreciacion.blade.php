@@ -207,7 +207,7 @@
                 return;
             }
 
-            window.open("{{ URL::to('admin/generador/pdf/anual') }}/" + anio);
+            window.open("{{ URL::to('admin/reporte/pdf/calculo-anual') }}/" + anio);
         }
 
         // generar pdf codigo del bien

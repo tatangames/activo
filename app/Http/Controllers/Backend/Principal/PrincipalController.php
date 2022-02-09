@@ -62,7 +62,7 @@ class PrincipalController extends Controller
             $codigo = $codigo + 1;
         }
 
-        $estados = Estados::orderBy('nombre')->get();
+        $estados = Estados::orderBy('id', 'ASC')->get();
 
         return view('backend.admin.principal.nuevobien.ingresobienesinmuebles', compact('codigo',
             'estados'));

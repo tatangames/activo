@@ -112,7 +112,7 @@ class ComodatoController extends Controller
 
         if($request->get('query')){
             $query = $request->get('query');
-            $data = BienesMuebles::where('descripcion', 'LIKE', "%{$query}%")->get();
+            $data = BienesMuebles::where('descripcion', 'LIKE', "%{$query}%")->take(25)->get();
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             $tiene = true;
             foreach($data as $row){
@@ -121,6 +121,7 @@ class ComodatoController extends Controller
                     $tiene = false;
                     $output .= '
                  <li onclick="modificarValor('.$row->id.')"><a href="#">'.$row->descripcion.'</a></li>
+                <hr>
                 ';
                 }
             }
@@ -136,7 +137,7 @@ class ComodatoController extends Controller
 
         if($request->get('query')){
             $query = $request->get('query');
-            $data = BienesInmuebles::where('descripcion', 'LIKE', "%{$query}%")->get();
+            $data = BienesInmuebles::where('descripcion', 'LIKE', "%{$query}%")->take(25)->get();
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             $tiene = true;
             foreach($data as $row){
@@ -145,6 +146,7 @@ class ComodatoController extends Controller
                     $tiene = false;
                     $output .= '
                  <li onclick="modificarValor('.$row->id.')"><a href="#">'.$row->descripcion.'</a></li>
+                <hr>
                 ';
                 }
             }
@@ -160,7 +162,7 @@ class ComodatoController extends Controller
 
         if($request->get('query')){
             $query = $request->get('query');
-            $data = BienesVehiculo::where('descripcion', 'LIKE', "%{$query}%")->get();
+            $data = BienesVehiculo::where('descripcion', 'LIKE', "%{$query}%")->take(25)->get();
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             $tiene = true;
             foreach($data as $row){
@@ -169,6 +171,7 @@ class ComodatoController extends Controller
                     $tiene = false;
                     $output .= '
                  <li onclick="modificarValor('.$row->id.')"><a href="#">'.$row->descripcion.'</a></li>
+                   <hr>
                 ';
                 }
             }

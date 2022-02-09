@@ -24,6 +24,11 @@
                 <i class="fas fa-pencil-alt"></i>
                 Guardar Registro
             </button>
+
+            <button type="button" onclick="verPDF()" class="btn btn-success btn-sm">
+                <i class="fas fa-pencil-alt"></i>
+                Generar PDF
+            </button>
         </div>
     </section>
 
@@ -35,8 +40,6 @@
                     <div class="card-body">
 
                         <div class="form-group">
-
-
 
                                 <div class="form-group row">
                                     <label class="col-sm-2">Código del bien:</label>
@@ -77,6 +80,13 @@
                                     <label class="col-sm-2">Valor del bien:</label>
                                     <div class="col-sm-8">
                                         <p>${{ $info->valor }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2">Año del Bien:</label>
+                                    <div class="col-sm-8">
+                                        <p>{{ $info->anio }}</p>
                                     </div>
                                 </div>
 
@@ -338,6 +348,13 @@
 
     function infoGuardado(){
 
+    }
+
+    function verPDF(){
+
+        var idbien = {{ $idbien }};
+
+        window.open("{{ URL::to('admin/calculo/maquinaria/pdf') }}/" + idbien);
     }
 
     </script>

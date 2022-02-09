@@ -139,8 +139,8 @@
 
 <script type="text/php">
     if (isset($pdf)) {
-        $x = 258;
-        $y = 760;
+        $x = 355;
+        $y = 575;
         $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
         $font = null;
         $size = 10;

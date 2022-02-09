@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateCodigoContableTable extends Migration
 {
     /**
-     * Run the migrations.
+     * codigos contable
      *
      * @return void
      */

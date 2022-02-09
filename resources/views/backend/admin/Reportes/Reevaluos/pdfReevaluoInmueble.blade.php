@@ -94,7 +94,7 @@
 @else
 
     <div id="content">
-        <table id="tabla" style="width: 95%; margin-top: 30px; margin-bottom: 35px" >
+        <table id="tabla" style="width: 95%; table-layout:fixed;">
             <thead>
             <tr>
                 <th style="text-align: center; color: black; font-size:15px; width: 12%">Código</th>

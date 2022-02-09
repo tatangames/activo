@@ -53,7 +53,7 @@
                                 <label class="col-sm-2 col-form-label">Nombre y/o Descripción del Bien:</label>
                                 <div class="col-sm-8">
                                     <div class="form-group">
-                                        <input type="text" name="descripcion" id="descripcion" class="form-control input-lg" autocomplete="off"/>
+                                        <input type="text" name="descripcion" placeholder="Bien Inmueble" id="descripcion" class="form-control input-lg" autocomplete="off"/>
                                         <div id="countryList" style="position: absolute; z-index: 9;">
                                         </div>
                                     </div>

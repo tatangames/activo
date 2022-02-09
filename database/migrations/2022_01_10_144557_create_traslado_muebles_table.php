@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateTrasladoMueblesTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de traslado muebles
      *
      * @return void
      */

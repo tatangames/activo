@@ -59,7 +59,7 @@
                     </div>
                     <br><br>
                     <div class="form-group text-center">
-                        <input type="button" value="Entrar" id="btnLogin" onclick="login()" class="btn login_btn">
+                        <input type="button" value="Iniciar" id="btnLogin" onclick="login()" class="btn login_btn">
                     </div>
                 </form>
             </div>

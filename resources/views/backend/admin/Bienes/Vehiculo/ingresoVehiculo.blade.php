@@ -52,7 +52,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Código</label>
+                                            <label>Código *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -82,7 +82,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Departamento</label>
+                                            <label>Departamento *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
@@ -118,7 +118,7 @@
 
 
                                         <div class="form-group">
-                                            <label>Código Contable</label>
+                                            <label>Código Contable *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
@@ -133,7 +133,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Código Depreciación</label>
+                                            <label>Código Depreciación *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
@@ -258,8 +258,9 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" onclick="salir()" class="btn btn-default">Salir</button>
+                    <button type="button" onclick="verificar()" class="btn btn-success">Guardar</button>
                 </div>
 
             </div>
@@ -350,10 +351,12 @@
                     return;
                 }
 
-                if(valor.length > 9){
-                    toastr.error('valor máximo 9 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 dígitos de límite');
                     return;
                 }
+            }else{
+                valor = 0;
             }
 
             if(departamento == '0'){
@@ -400,6 +403,8 @@
                     toastr.error('vida util máximo 9 digitos de límite');
                     return;
                 }
+            }else{
+                vidautil = 0;
             }
 
             if(anio.length > 0){
@@ -417,6 +422,8 @@
                     toastr.error('año máximo 9 digitos de límite');
                     return;
                 }
+            }else{
+                anio = 0;
             }
 
             if(encargado.length > 0){
@@ -441,6 +448,8 @@
                     toastr.error('valor residual máximo 9 digitos de límite');
                     return;
                 }
+            }else{
+                valorresidual = 0;
             }
 
             if(observaciones.length > 0){

@@ -52,14 +52,9 @@ class ReevaluoController extends Controller
         return view('backend.admin.principal.reevaluo.tabla.tablareevaluo', compact('dataArray'));
     }
 
-    public function descargarDocumentoReevaluo($id, $tipo){
+    public function descargarDocumentoReevaluo($id){
 
-        if($tipo == 1){
-            $url = ReevaluoInmueble::where('id', $id)->pluck('documento')->first();
-        }
-        else{
-            $url = ReevaluoInmueble::where('id', $id)->pluck('documento')->first();
-        }
+        $url = ReevaluoInmueble::where('id', $id)->pluck('documento')->first();
 
         $pathToFile = "storage/archivos/".$url;
 

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateHistorialdaMuebleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de historialda para mueble
      *
      * @return void
      */

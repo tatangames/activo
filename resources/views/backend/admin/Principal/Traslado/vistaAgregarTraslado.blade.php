@@ -53,7 +53,7 @@
                                     <label class="col-sm-2 col-form-label">Tipo de Bien:</label>
                                     <div class="col-sm-8">
                                         <div class="form-group">
-                                            <select class="form-control" id="select-tipo">
+                                            <select class="form-control" id="select-tipo" onchange="setearDescripcion()">
                                                 <option value="0" disabled selected>Seleccione una opción...</option>
                                                 <option value="1">Muebles</option>
                                                 <option value="2">Vehículos y Maquinaria</option>
@@ -135,7 +135,7 @@
         $(document).ready(function(){
             document.getElementById("divcontenedor").style.display = "block";
 
-            window.idGlobalBien = 0;
+            window.idGlobalBienTraslado = 0;
 
             $('#descripcion').keyup(function(){
 
@@ -159,13 +159,13 @@
                                 $('#countryList').html(response.data);
 
                                 if(response.data == ''){
-                                    idGlobalBien = 0;
+                                    idGlobalBienTraslado = 0;
                                 }
                             })
                             .catch((error) => {
                             });
                     }else{
-                        idGlobalBien = 0;
+                        idGlobalBienTraslado = 0;
                     }
                 }
 
@@ -181,16 +181,16 @@
                                 $('#countryList').html(response.data);
 
                                 if(response.data == ''){
-                                    idGlobalBien = 0;
+                                    idGlobalBienTraslado = 0;
                                 }
                             })
                             .catch((error) => {
                             });
                     }else{
-                        idGlobalBien = 0;
+                        idGlobalBienTraslado = 0;
                     }
                 }else{
-                    idGlobalBien = 0;
+                    idGlobalBienTraslado = 0;
                 }
 
             });
@@ -206,9 +206,14 @@
 
         });
 
+        function setearDescripcion(){
+            document.getElementById("descripcion").value = '';
+            idGlobalBienTraslado = 0;
+        }
+
         // esta funcion se ejecuta cuando seleccionamos un item
         function modificarValor(id,depto) {
-            idGlobalBien = id;
+            idGlobalBienTraslado = id;
             $('#select-envia').val(depto);
         }
 
@@ -246,7 +251,7 @@
 
             openLoading();
             var formData = new FormData();
-            formData.append('idglobal', idGlobalBien);
+            formData.append('idglobal', idGlobalBienTraslado);
             formData.append('tipo', tipo);
             formData.append('fecha', fecha);
             formData.append('envia', envia);

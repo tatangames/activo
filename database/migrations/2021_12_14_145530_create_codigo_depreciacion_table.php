@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateCodigoDepreciacionTable extends Migration
 {
     /**
-     * Run the migrations.
+     * codigo depreciacion
      *
      * @return void
      */

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateTrasladoMaquinariaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de traslado maquinaria
      *
      * @return void
      */

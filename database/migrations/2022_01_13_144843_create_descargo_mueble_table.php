@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateDescargoMuebleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de descargos muebles
      *
      * @return void
      */

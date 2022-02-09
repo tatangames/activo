@@ -472,14 +472,6 @@ class ReportesController extends Controller
         return view('backend.admin.reportes.ventas.vistareporteventas');
     }
 
-    public function pdfVentas($fi, $ff, $valor){
-        $view =  \View::make('backend.admin.reportes.ventas.pdfventas', compact(['lista', 'nombre']))->render();
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->getDomPDF()->set_option("enable_php", true);
-        $pdf->loadHTML($view)->setPaper('carta', 'portrait');
-
-        return $pdf->stream();
-    }
 
     public function indexDonaciones(){
         return view('backend.admin.reportes.donaciones.vistareportedonaciones');

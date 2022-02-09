@@ -43,15 +43,15 @@
 
         <section class="content">
             <div class="container-fluid">
+
                 <div class="card card-default">
                     <div class="card-body">
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -71,7 +71,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Departamento</label>
+                                            <label>Departamento *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
@@ -126,7 +126,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Tipo Compra</label>
+                                            <label>Tipo Compra *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-shopping-cart"></i></span>
@@ -150,7 +150,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Código Descriptor</label>
+                                            <label>Código Descriptor *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
@@ -165,7 +165,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Fecha de Compra</label>
+                                            <label>Fecha de Compra *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
@@ -183,8 +183,6 @@
                                                 <input type="number" class="form-control" id="vidautil">
                                             </div>
                                         </div>
-
-
 
                                         <div class="form-group">
                                             <label>Observaciones</label>
@@ -223,8 +221,9 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" onclick="salir()" class="btn btn-default">Salir</button>
+                    <button type="button" onclick="verificar()" class="btn btn-success">Guardar</button>
                 </div>
 
             </div>
@@ -268,8 +267,8 @@
                     return;
                 }
 
-                if(valor.length > 7){
-                    toastr.error('valor máximo 7 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 dígitos de límite');
                     return;
                 }
 
@@ -281,7 +280,7 @@
                     document.getElementById('select-codcontable').disabled = true;
                     document.getElementById('select-coddepreciacion').disabled = true;
                     document.getElementById('valorresidual').disabled = true;
-               }
+                }
             }else{
                 document.getElementById('select-codcontable').disabled = true;
                 document.getElementById('select-coddepreciacion').disabled = true;
@@ -332,6 +331,11 @@
                 return;
             }
 
+            if(fechacompra === ''){
+                toastr.error('Fecha de compra es requerido');
+                return;
+            }
+
             if(departamento == '0'){
                 toastr.error('Seleccionar departamento');
                 return;
@@ -361,8 +365,8 @@
                     return;
                 }
 
-                if(valor.length > 7){
-                    toastr.error('valor máximo 7 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 dígitos de límite');
                     return;
                 }
 
@@ -383,8 +387,8 @@
                     valorDepreciacion = coddepreciacion;
 
                     if(valorresidual.length > 0){
-                        if(!valorresidual.match(reglaNumeroEntero)) {
-                            toastr.error('valor residual debe ser número Entero');
+                        if(!valorresidual.match(reglaNumeroDecimal)) {
+                            toastr.error('valor residual debe ser número Decimal');
                             return;
                         }
 
@@ -393,16 +397,20 @@
                             return;
                         }
 
-                        if(valorresidual.length > 7){
-                            toastr.error('valor residual máximo 7 digitos de límite');
+                        if(valorresidual.length > 10){
+                            toastr.error('valor residual máximo 10 dígitos de límite');
                             return;
                         }
 
                         // obtener valor
                         datoResidual = valorresidual;
+                    }else{
+                        datoResidual = 0; // defecto
                     }
 
                 }
+            }else{
+                valor = 0; // por defecto
             }
 
             if(vidautil.length > 0){
@@ -416,10 +424,12 @@
                     return;
                 }
 
-                if(vidautil.length > 7){
-                    toastr.error('vida util máximo 7 digitos de límite');
+                if(vidautil.length > 10){
+                    toastr.error('vida util máximo 10 dígitos de límite');
                     return;
                 }
+            }else{
+                vidautil = 0; // defecto
             }
 
             if(observaciones.length > 0){

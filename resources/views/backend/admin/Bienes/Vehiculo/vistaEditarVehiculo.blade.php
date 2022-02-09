@@ -52,7 +52,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Código</label>
+                                            <label>Código *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -253,7 +253,11 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Documento</label>
+                                            @if($info->documento != null)
+                                                <label>Documento (Ya hay un documento agregado)</label>
+                                            @else
+                                                <label>Documento:</label>
+                                            @endif
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-file"></i></span>
@@ -268,8 +272,9 @@
                     </div>
 
                 </div>
-                <div class="card-footer">
-                    <button type="button" onclick="verificar()" class="btn btn-success float-right">Actualizar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" onclick="salir()" class="btn btn-default">Salir</button>
+                    <button type="button" onclick="verificar()" class="btn btn-success">Guardar</button>
                 </div>
 
 
@@ -363,10 +368,12 @@
                     return;
                 }
 
-                if(valor.length > 7){
-                    toastr.error('valor máximo 7 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 dígitos de límite');
                     return;
                 }
+            }else{
+                valor = 0;
             }
 
             if(departamento == '0'){
@@ -413,6 +420,8 @@
                     toastr.error('vida util máximo 7 digitos de límite');
                     return;
                 }
+            }else{
+                vidautil = 0;
             }
 
             if(anio.length > 0){
@@ -426,8 +435,8 @@
                     return;
                 }
 
-                if(anio.length > 7){
-                    toastr.error('año máximo 7 digitos de límite');
+                if(anio.length > 9){
+                    toastr.error('año máximo 9 dígitos de límite');
                     return;
                 }
             }
@@ -440,8 +449,8 @@
             }
 
             if(valorresidual.length > 0){
-                if(!valorresidual.match(reglaNumeroEntero)) {
-                    toastr.error('valor residual debe ser número Entero');
+                if(!valorresidual.match(reglaNumeroDecimal)) {
+                    toastr.error('valor residual debe ser número Decimal');
                     return;
                 }
 
@@ -454,6 +463,8 @@
                     toastr.error('valor residual máximo 7 digitos de límite');
                     return;
                 }
+            }else{
+                valorresidual = 0;
             }
 
             if(observaciones.length > 0){
@@ -510,6 +521,10 @@
                     closeLoading();
                     toastr.error('Error al Actualizar');
                 });
+        }
+
+        function salir(){
+            window.location.href="{{ url('/admin/bienes/vehiculo/index') }}";
         }
 
 

@@ -52,7 +52,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -216,7 +216,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Fecha de Compra</label>
+                                            <label>Fecha de Compra *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
@@ -235,20 +235,22 @@
                                             </div>
                                         </div>
 
-
-
                                         <div class="form-group">
                                             <label>Observaciones</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-comment-alt"></i></span>
                                                 </div>
-                                                <textarea type="text" rows="2" cols="50" class="form-control" value="{{ $info->observaciones }}" maxlength="20000" id="observaciones"> </textarea>
+                                                <textarea type="text" rows="2" cols="50" class="form-control" maxlength="20000" id="observaciones">{{ $info->observaciones }}</textarea>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
+                                            @if($info->documento != null)
+                                            <label>Documento (Ya hay un documento agregado)</label>
+                                            @else
                                             <label>Documento</label>
+                                            @endif
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-file"></i></span>
@@ -258,7 +260,11 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Factura</label>
+                                            @if($info->factura != null)
+                                                <label>Factura (Ya hay una factura agregada)</label>
+                                            @else
+                                                <label>Factura</label>
+                                            @endif
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-file"></i></span>
@@ -272,12 +278,12 @@
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <div class="card-footer">
-                    <button type="button" onclick="verificar()" class="btn btn-success float-right">Guardar</button>
                 </div>
 
+                <div class="modal-footer justify-content-between">
+                    <button type="button" onclick="salir()" class="btn btn-default">Salir</button>
+                    <button type="button" onclick="verificar()" class="btn btn-success">Guardar</button>
+                </div>
 
             </div>
         </section>
@@ -332,8 +338,8 @@
                     return;
                 }
 
-                if(valor.length > 7){
-                    toastr.error('valor máximo 7 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 dígitos de límite');
                     return;
                 }
 
@@ -439,8 +445,8 @@
                     return;
                 }
 
-                if(valor.length > 7){
-                    toastr.error('valor máximo 7 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 dígitos de límite');
                     return;
                 }
 
@@ -461,8 +467,8 @@
                     valorDepre = coddepreciacion;
 
                     if(valorresidual.length > 0){
-                        if(!valorresidual.match(reglaNumeroEntero)) {
-                            toastr.error('valor residual debe ser número Entero');
+                        if(!valorresidual.match(reglaNumeroDecimal)) {
+                            toastr.error('valor residual debe ser número Decimal');
                             return;
                         }
 
@@ -471,8 +477,8 @@
                             return;
                         }
 
-                        if(valorresidual.length > 7){
-                            toastr.error('valor residual máximo 7 digitos de límite');
+                        if(valorresidual.length > 10){
+                            toastr.error('valor residual máximo 10 dígitos de límite');
                             return;
                         }
 
@@ -495,10 +501,12 @@
                     return;
                 }
 
-                if(vidautil.length > 7){
-                    toastr.error('vida util máximo 7 digitos de límite');
+                if(vidautil.length > 10){
+                    toastr.error('vida util máximo 10 dígitos de límite');
                     return;
                 }
+            }else{
+                vidautil = 0;
             }
 
             if(observaciones.length > 0){
@@ -560,6 +568,10 @@
         function limpiar(){
             document.getElementById('documento').value = "";
             document.getElementById('factura').value = "";
+        }
+
+        function salir(){
+            window.location.href="{{ url('/admin/bienes/muebles/index') }}";
         }
 
     </script>

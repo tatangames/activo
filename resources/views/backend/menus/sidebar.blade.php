@@ -1,8 +1,22 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+<style>
+
+    .sidebar p {
+        color: #006dcc;; !important;
+    }
+
+    .sidebar i {
+        color: #006dcc;; !important;
+    }
+
+</style>
+
+<aside class="main-sidebar sidebar-dark elevation-4">
     <a href="#" class="brand-link">
         <img src="{{ asset('images/icono-sistema.png') }}" alt="Logo" class="brand-image img-circle elevation-3" >
-        <span class="brand-text font-weight" style="color: white">ACTIVO</span>
+        <span class="brand-text font-weight" style="color: black">ACTIVO</span>
     </a>
+
 
     <div class="sidebar">
 
@@ -11,7 +25,7 @@
 
              <li class="nav-item">
 
-                 <a href="#" class="nav-link">
+                 <a href="#" class="nav-link nav-">
                     <i class="far fa-edit"></i>
                     <p>
                         Roles y Permisos
@@ -78,7 +92,6 @@
 
                     </ul>
                 </li>
-
 
                 <li class="nav-item">
 
@@ -229,14 +242,8 @@
                     </ul>
                 </li>
 
-
-
-
             </ul>
         </nav>
-
-
-
 
     </div>
 </aside>

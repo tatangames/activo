@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateComodatoMaquinariaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de comodato maquinaria
      *
      * @return void
      */

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateVentaMuebleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de venta mueble
      *
      * @return void
      */

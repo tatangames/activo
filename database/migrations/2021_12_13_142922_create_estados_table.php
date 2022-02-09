@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateEstadosTable extends Migration
 {
     /**
-     * Run the migrations.
+     * estados de los bienes
      *
      * @return void
      */

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateHistorialdaMaquinariaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de historialda maquinaria
      *
      * @return void
      */

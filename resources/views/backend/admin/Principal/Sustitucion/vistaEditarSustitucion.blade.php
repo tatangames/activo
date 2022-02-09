@@ -107,7 +107,11 @@
                                 <br>
 
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Documentación:</label>
+                                    @if($info->documento != null)
+                                        <label class="col-sm-2 col-form-label">Documentación (Ya hay un documento agregado)</label>
+                                    @else
+                                        <label class="col-sm-2 col-form-label">Documentación:</label>
+                                    @endif
                                     <div class="col-sm-8">
                                         <div class="input-group">
                                             <div class="input-group-prepend">

@@ -6,6 +6,7 @@
     <title>Alcaldía Municipal | Panel</title>
 
 
+
     <link href="{{ asset('images/icono-sistema.png') }}" rel="icon">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -17,6 +18,8 @@
     <link href="{{ asset('css/toastr.min.css') }}" type="text/css" rel="stylesheet" />
     @yield('content-admin-css')
 </head>
+
+
 
 <!-- para iniciar con el menu cerrado colocar
  <body class="sidebar-mini sidebar-closed sidebar-collapse" style="height: auto;">
@@ -38,6 +41,8 @@
     @include("backend.menus.footer")
 
 </div>
+
+
 
 <script src="{{ asset('js/jquery.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>

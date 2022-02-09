@@ -40,11 +40,7 @@ class BienesInmueblesController extends Controller
             $codigo = $codigo + 1;
         }
 
-
-        $estados = Estados::orderBy('nombre')->get();
-
-        return view('backend.admin.bienes.inmuebles.ingresobienesinmuebles', compact('codigo',
-            'estados'));
+        return view('backend.admin.bienes.inmuebles.ingresobienesinmuebles', compact('codigo'));
     }
 
     public function nuevoBienInmuebles(Request $request){
@@ -76,10 +72,9 @@ class BienesInmueblesController extends Controller
             $ve->observaciones = $request->observaciones;
             $ve->fechacompra = $request->fechacompra;
             $ve->contiene = $request->contiene;
-            $ve->id_estados = $request->estado;
             $ve->edificaciones = $request->edificaciones;
             $ve->fechapermuta = $request->fechapermuta;
-            $ve->id_estado = 1; // es uso
+            $ve->id_estado = 1; // en uso
 
             if($ve->save()) {
 
@@ -101,10 +96,9 @@ class BienesInmueblesController extends Controller
             $ve->observaciones = $request->observaciones;
             $ve->fechacompra = $request->fechacompra;
             $ve->contiene = $request->contiene;
-            $ve->id_estados = $request->estado;
             $ve->edificaciones = $request->edificaciones;
             $ve->fechapermuta = $request->fechapermuta;
-            $ve->id_estado = 1; // es uso
+            $ve->id_estado = 1; // en uso
 
             if($ve->save()) {
                 $codigo = BienesInmuebles::max('codigo');
@@ -132,14 +126,8 @@ class BienesInmueblesController extends Controller
     public function vistaEditarRegistro($id){
 
         $info = BienesInmuebles::where('id', $id)->first();
-        $estados = Estados::orderBy('nombre')->get();
 
-        $mensaje = "";
-        if($info->documento != null){
-            $mensaje = "Ya hay un documento";
-        }
-
-        return view('backend.admin.bienes.inmuebles.vistaeditarbienesinmuebles', compact('info', 'estados', 'mensaje'));
+        return view('backend.admin.bienes.inmuebles.vistaeditarbienesinmuebles', compact('info'));
     }
 
     public function editarBienInmuebles(Request $request){
@@ -175,7 +163,6 @@ class BienesInmueblesController extends Controller
                     'observaciones' => $request->observaciones,
                     'fechacompra' => $request->fechacompra,
                     'contiene' => $request->contiene,
-                    'id_estados' => $request->estado,
                     'edificaciones' => $request->edificaciones,
                     'fechapermuta' => $request->fechapermuta,
                 ]);
@@ -197,7 +184,6 @@ class BienesInmueblesController extends Controller
                     'observaciones' => $request->observaciones,
                     'fechacompra' => $request->fechacompra,
                     'contiene' => $request->contiene,
-                    'id_estados' => $request->estado,
                     'edificaciones' => $request->edificaciones,
                     'fechapermuta' => $request->fechapermuta,
                 ]);

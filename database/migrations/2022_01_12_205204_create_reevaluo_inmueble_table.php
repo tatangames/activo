@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateReevaluoInmuebleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de reevaluo inmueble
      *
      * @return void
      */

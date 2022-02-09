@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateSustitucionMaquinariaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * lista de sustitucion o reposicion vital para maquinaria
      *
      * @return void
      */

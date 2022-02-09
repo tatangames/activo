@@ -8,7 +8,7 @@ use Spatie\Permission\PermissionRegistrar;
 class CreatePermissionTables extends Migration
 {
     /**
-     * Run the migrations.
+     * Roles y permisos
      *
      * @return void
      */

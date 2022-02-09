@@ -52,7 +52,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Código</label>
+                                            <label>Código *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -82,7 +82,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Departamento</label>
+                                            <label>Departamento *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
@@ -118,7 +118,7 @@
 
 
                                         <div class="form-group">
-                                            <label>Código Contable</label>
+                                            <label>Código Contable *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
@@ -133,7 +133,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Código Depreciación</label>
+                                            <label>Código Depreciación *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
@@ -352,8 +352,8 @@
                     return;
                 }
 
-                if(valor.length > 9){
-                    toastr.error('valor máximo 9 digitos de límite');
+                if(valor.length > 10){
+                    toastr.error('valor máximo 10 digitos de límite');
                     return;
                 }
             }
@@ -402,6 +402,8 @@
                     toastr.error('vida util máximo 9 digitos de límite');
                     return;
                 }
+            }else{
+                vidautil = 0;
             }
 
             if(anio.length > 0){
@@ -419,6 +421,8 @@
                     toastr.error('año máximo 9 digitos de límite');
                     return;
                 }
+            }else{
+                anio = 0;
             }
 
             if(encargado.length > 0){
@@ -429,8 +433,8 @@
             }
 
             if(valorresidual.length > 0){
-                if(!valorresidual.match(reglaNumeroEntero)) {
-                    toastr.error('valor residual debe ser número Entero');
+                if(!valorresidual.match(reglaNumeroDecimal)) {
+                    toastr.error('valor residual debe ser número Decimal');
                     return;
                 }
 
@@ -443,6 +447,8 @@
                     toastr.error('valor residual máximo 9 digitos de límite');
                     return;
                 }
+            }else{
+                valorresidual = 0;
             }
 
             if(observaciones.length > 0){

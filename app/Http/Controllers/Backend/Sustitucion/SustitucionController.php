@@ -105,6 +105,7 @@ class SustitucionController extends Controller
                     $tiene = false;
                     $output .= '
                  <li onclick="modificarValor('.$row->id.','.$row->id_departamento.')"><a href="#">'.$row->descripcion.'</a></li>
+                  <hr>
                 ';
                 }
             }
@@ -129,6 +130,7 @@ class SustitucionController extends Controller
                     $tiene = false;
                     $output .= '
                  <li onclick="modificarValor('.$row->id.','.$row->id_departamento.')"><a href="#">'.$row->descripcion.'</a></li>
+                 <hr>
                 ';
                 }
             }

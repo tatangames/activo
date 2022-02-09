@@ -24,6 +24,11 @@
                 <i class="fas fa-pencil-alt"></i>
                 Guardar Registro
             </button>
+
+            <button type="button" onclick="verPDF()" class="btn btn-success btn-sm">
+                <i class="fas fa-pencil-alt"></i>
+                Generar PDF
+            </button>
         </div>
     </section>
 
@@ -233,6 +238,7 @@
 
                                 </tr>
                                 </thead>
+
                                 <tbody>
 
                                 @foreach($dataArray as $data)
@@ -338,6 +344,13 @@
 
     function infoGuardado(){
 
+    }
+
+    function verPDF(){
+
+        var idbien = {{ $idbien }};
+
+        window.open("{{ URL::to('admin/calculo/mueble/pdf') }}/" + idbien);
     }
 
     </script>

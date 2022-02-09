@@ -52,7 +52,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label>Código</label>
+                                            <label>Código *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Descripción</label>
+                                            <label>Descripción *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
@@ -152,24 +152,6 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Estado</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-eye"></i></span>
-                                                </div>
-                                                <select class="form-control" id="select-estado">
-                                                    @foreach($estados as $item)
-                                                        @if($info->id_estados == $item->id)
-                                                            <option value="{{$item->id}}" selected>{{$item->nombre}}</option>
-                                                        @else
-                                                            <option value="{{$item->id}}">{{$item->nombre}}</option>
-                                                        @endif
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
                                             <label>Edificaciones</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -189,9 +171,12 @@
                                             </div>
                                         </div>
 
-
                                         <div class="form-group">
-                                            <label>Documento</label>
+                                            @if($info->documento != null)
+                                                <label>Documento (Ya hay un documento agregado)</label>
+                                            @else
+                                                <label>Documento</label>
+                                            @endif
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-file"></i></span>
@@ -199,7 +184,6 @@
                                                 <input type="file" style="color:#191818; width: 80%" id="documento" accept="image/jpeg, image/jpg, image/png, .pdf"/>
                                             </div>
                                             <br>
-                                            <label>{{ $mensaje }}</label>
                                         </div>
 
                                     </div>
@@ -208,12 +192,12 @@
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <div class="card-footer">
-                    <button type="button" onclick="verificar()" class="btn btn-success float-right">Actualizar</button>
                 </div>
 
+                <div class="modal-footer justify-content-between">
+                    <button type="button" onclick="salir()" class="btn btn-default">Salir</button>
+                    <button type="button" onclick="verificar()" class="btn btn-success">Guardar</button>
+                </div>
 
             </div>
         </section>
@@ -236,8 +220,6 @@
     <script type="text/javascript">
         $(document).ready(function(){
             document.getElementById("divcontenedor").style.display = "block";
-
-
         });
     </script>
 
@@ -271,13 +253,17 @@
             var observaciones = document.getElementById('observaciones').value;
             var fechacompra = document.getElementById('fechacompra').value;
             var contiene = document.getElementById('contiene').value;
-            var estado = document.getElementById('select-estado').value;
             var edificaciones = document.getElementById('edificaciones').value;
             var fechapermuta = document.getElementById('fechapermuta').value;
             var documento = document.getElementById('documento');
 
             if(codigo === ''){
                 toastr.error('código es requerido');
+                return;
+            }
+
+            if(descripcion === ''){
+                toastr.error('Descripción es requerida');
                 return;
             }
 
@@ -299,10 +285,12 @@
                     return;
                 }
 
-                if (valor.length > 9) {
-                    toastr.error('valor máximo 9 digitos de límite');
+                if (valor.length > 10) {
+                    toastr.error('valor máximo 10 digitos de límite');
                     return;
                 }
+            }else{
+                valor = 0;
             }
 
             if(ubicacion.length > 0){
@@ -320,7 +308,7 @@
             }
 
             if(valorregistrado.length > 0) {
-                if (!valor.match(reglaNumeroDecimal)) {
+                if (!valorregistrado.match(reglaNumeroDecimal)) {
                     toastr.error('valor registrado debe ser número Decimal');
                     return;
                 }
@@ -330,10 +318,12 @@
                     return;
                 }
 
-                if (valorregistrado.length > 9) {
-                    toastr.error('valor registrado máximo 9 digitos de límite');
+                if (valorregistrado.length > 10) {
+                    toastr.error('valor registrado máximo 10 digitos de límite');
                     return;
                 }
+            }else{
+                valorregistrado = 0;
             }
 
             if(observaciones.length > 0){
@@ -345,13 +335,13 @@
 
             if(contiene.length > 0){
                 if(contiene.length > 800){
-                    toastr.error('contiene debe llevar máximo 800 caracteres');
+                    toastr.error('Contiene debe llevar máximo 800 caracteres');
                     return;
                 }
             }
 
             if(edificaciones.length > 0) {
-                if (!valor.match(reglaNumeroDecimal)) {
+                if (!edificaciones.match(reglaNumeroDecimal)) {
                     toastr.error('edificaciones debe ser número Decimal');
                     return;
                 }
@@ -361,12 +351,13 @@
                     return;
                 }
 
-                if (edificaciones.length > 9) {
-                    toastr.error('edificaciones máximo 9 digitos de límite');
+                if (edificaciones.length > 10) {
+                    toastr.error('edificaciones máximo 10 digitos de límite');
                     return;
                 }
+            }else{
+                edificaciones = 0;
             }
-
 
             if(documento.files && documento.files[0]){ // si trae doc
                 if (!documento.files[0].type.match('image/jpeg|image/jpeg|image/png|pdf')){
@@ -388,7 +379,6 @@
             formData.append('observaciones', observaciones);
             formData.append('fechacompra', fechacompra);
             formData.append('contiene', contiene);
-            formData.append('estado', estado);
             formData.append('edificaciones', edificaciones);
             formData.append('fechapermuta', fechapermuta);
 
@@ -397,19 +387,23 @@
                 .then((response) => {
                     closeLoading();
                     if(response.data.success === 1){
-                        toastr.error('error', 'El código ingresado ya existe');
+                        toastr.error('El código ingresado ya existe');
                     }
                     else if(response.data.success === 2){
                         $('#modalAgregar').modal('hide');
                         toastr.success('Actualizado correctamente');
                     } else{
-                        toastr.error('error', 'Error al Actualizar');
+                        toastr.error('Error al Actualizar');
                     }
                 })
                 .catch((error) => {
                     closeLoading();
-                    toastr.error('error', 'Error al Actualizar');
+                    toastr.error('Error al Actualizar');
                 });
+        }
+
+        function salir(){
+            window.location.href="{{ url('/admin/bienes/inmuebles/index') }}";
         }
 
     </script>

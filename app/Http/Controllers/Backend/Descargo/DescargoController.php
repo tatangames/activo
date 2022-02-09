@@ -96,6 +96,7 @@ class DescargoController extends Controller
 
                     $output .= '
                  <li onclick="modificarValor('.$row->id.','.$valor.')"><a href="#">'.$row->descripcion.'</a></li>
+                    <hr>
                 ';
                 }
             }
@@ -126,6 +127,7 @@ class DescargoController extends Controller
 
                     $output .= '
                  <li onclick="modificarValor('.$row->id.','.$valor.')"><a href="#">'.$row->descripcion.'</a></li>
+                <hr>
                 ';
                 }
             }
