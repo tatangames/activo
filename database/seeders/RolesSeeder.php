@@ -20,11 +20,14 @@ class RolesSeeder extends Seeder
         // encargado administrador
         $role1 = Role::create(['name' => 'Encargado-Administrador']);
 
+        $role2 = Role::create(['name' => 'Encargado-Sistema']);
+
 
         // --- CREAR PERMISOS ---
 
         // visualizar roles y permisos
-        Permission::create(['name' => 'vista.principal', 'description' => 'vista de roles y permisos'])->syncRoles($role1);
+        Permission::create(['name' => 'vista.roles', 'description' => 'vista de roles y permisos'])->syncRoles($role1);
 
+        Permission::create(['name' => 'vista.principal.sistema', 'description' => 'vista principal del sistema'])->syncRoles($role2);
     }
 }

@@ -92,7 +92,6 @@
 
     <script>
 
-
         function generarPdf(){
             var valor = document.getElementById("select-tipo").value;
 

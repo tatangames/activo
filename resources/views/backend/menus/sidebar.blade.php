@@ -17,12 +17,13 @@
         <span class="brand-text font-weight" style="color: black">ACTIVO</span>
     </a>
 
-
     <div class="sidebar">
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
+
+            @can('vista.roles')
              <li class="nav-item">
 
                  <a href="#" class="nav-link nav-">
@@ -50,7 +51,9 @@
 
                 </ul>
              </li>
+                @endcan
 
+                @can('vista.principal.sistema')
             <li class="nav-item">
                 <a href="{{ route('admin.vista.principal') }}" target="frameprincipal" class="nav-link">
                     <i class="fas fa-home nav-icon"></i>
@@ -58,7 +61,7 @@
                 </a>
             </li>
 
-                <li class="nav-item">
+            <li class="nav-item">
 
                     <a href="#" class="nav-link">
                         <i class="fas fa-book"></i>
@@ -241,6 +244,9 @@
 
                     </ul>
                 </li>
+                @endcan
+
+
 
             </ul>
         </nav>

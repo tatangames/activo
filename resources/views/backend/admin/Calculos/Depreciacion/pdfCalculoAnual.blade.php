@@ -4,24 +4,12 @@
     <title>Alcaldía de Metapán | Reporte</title>
 
     <style>
-        @page {
-            margin: 120px 50px 80px 50px;
-        }
-
-        #header {
-            position: fixed;
-            top: -100px;
-            width: 100%;
-        }
-
-        footer {
-            position: fixed;
-            bottom: 75px;
-            height: 5px;
-        }
-
-        footer .page-number {
-            text-align: center;
+        .firma {
+            left: 0;
+            font-size: 20px;
+            margin-top: 200px;
+            text-align: left;
+            page-break-inside: avoid;
         }
 
         br[style] {
@@ -32,21 +20,22 @@
             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             border-collapse: collapse;
             width: 100%;
-            margin-left: 20px;
-            margin-right: 20px;
-            margin-top: 90px;
+            margin-top: 30px;
             text-align: center;
+            border: 0.5px solid #000000;
         }
 
         #tabla td{
-            border: 1px solid #000000;
+            border: 0.5px solid #000000;
             padding: 8px;
             text-align: center;
-            font-size: 15px;
+            font-size: 16px;
+            font-family: Arial;
+            letter-spacing: -7px;
         }
 
         #tabla th {
-            border: 1px solid #000000;
+            border: 0.5px solid #000000;
             padding: 3px;
             text-align: center;
         }
@@ -60,35 +49,23 @@
             font-size: 15px;
         }
 
+        thead {
+            display: table-row-group;
+        }
+
     </style>
 </head>
 <body>
 <div id="header">
     <div class="content">
         <img src="{{ asset('images/logo2.png') }}" style="float: right" alt="" height="88px" width="71px">
-        <p style="text-align: center; font-size: 17px; font-family: Tahoma; font-weight: bold;">ALCALDIA MUNICIPAL DE METAPÁN <br>
+        <p style="text-align: center; font-size: 25px; font-family: Tahoma; font-weight: bold;">ALCALDIA MUNICIPAL DE METAPÁN <br>
             ACTIVO FIJO <br> DEPRECIACION ANUAL {{ $anio }}</p>
     </div>
 
 </div>
 
-<footer>
-    <table>
-        <tr>
-            <td>
-
-            </td>
-            <td>
-                <p class="page">
-
-                </p>
-            </td>
-        </tr>
-    </table>
-</footer>
-
-    <br>
-
+<br>
 
 <div id="content">
     <table id="tabla" style="width: 95%; margin-top: 30px; margin-bottom: 35px" >
@@ -105,57 +82,32 @@
 
         <tbody>
 
-        @foreach($dataArray as $data)
+        @foreach($sortedArray as $data)
 
             <tr>
-                <td style="font-size: 13px">{{ $data['codigo'] }}</td>
-                <td style="font-size: 13px">{{ $data['descripcion'] }}</td>
-                <td style="font-size: 13px">{{ $data['coddepre'] }}</td>
-                <td style="font-size: 13px">{{ $data['depanual'] }}</td>
-                <td style="font-size: 13px">{{ $data['col1'] }}</td>
-                <td style="font-size: 13px">{{ $data['col2'] }}</td>
+                <td>{{ $data['codigo'] }}</td>
+                <td>{{ $data['descripcion'] }}</td>
+                <td>{{ $data['coddepre'] }}</td>
+                <td>{{ $data['depanual'] }}</td>
+                <td>{{ $data['col1'] }}</td>
+                <td>{{ $data['col2'] }}</td>
             </tr>
-
 
         @endforeach
         <tr>
-        <td style="font-size: 13px; border-style: none;"></td>
-        <td style="font-size: 13px; border-style: none;"></td>
-        <td style="font-size: 13px; border-style: none;"></td>
-        <td style="font-size: 13px">{{ $totaldep }}</td>
-        <td style="font-size: 13px">{{ $total17 }}</td>
-        <td style="font-size: 13px">{{ $total19 }}</td>
+        <td style="border-style: none;"></td>
+        <td style="border-style: none;"></td>
+        <td style="border-style: none;"></td>
+        <td>$ {{ $totaldep }}</td>
+        <td>$ {{ $total17 }}</td>
+        <td>$ {{ $total19 }}</td>
         </tr>
 
         </tbody>
 
     </table>
-    <br>
-    <br>
-    <br>
-    <p style="margin-left: 20px">
-        _________________________________<br>
-        Lic Esmeralda Rodriguez de Contreras<br>
-        Encargada de Inventario y Activo fijo
-    </p>
+
 </div>
-
-
-<script type="text/php">
-    if (isset($pdf)) {
-        $x = 355;
-        $y = 575;
-        $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
-        $font = null;
-        $size = 10;
-        $color = array(0,0,0);
-        $word_space = 0.0;  //  default
-        $char_space = 0.0;  //  default
-        $angle = 0.0;   //  default
-        $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
-    }
-
-</script>
 
 </body>
 </html>

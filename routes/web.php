@@ -68,6 +68,8 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
     Route::get('/admin/editar-perfil/index', [PerfilController::class,'indexEditarPerfil'])->name('admin.perfil');
     Route::post('/admin/editar-perfil/actualizar', [PerfilController::class, 'editarUsuario']);
 
+    Route::get('/admin/pdf', [PerfilController::class,'pdf']);
+
     // --- SIN PERMISOS VISTA 403 ---
     Route::get('sin-permisos', [ControlController::class,'indexSinPermiso'])->name('no.permisos.index');
 
@@ -140,9 +142,14 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
 
     // verificar existe codigo bienes muebles o maquinaria
     Route::post('/admin/verificar/existe-codigo', [CalculoDepreciacionController::class, 'verificarCodigo']);
-    Route::get('/admin/reporte/codigo-bien/{code}', [CalculoDepreciacionController::class,'indexReporteCodigo']);
+    Route::get('/admin/reporte/codigo-bien/{id}/{tipo}', [CalculoDepreciacionController::class,'indexReporteCodigo']);
 
     Route::post('/admin/guardar/historiada/mueble', [CalculoDepreciacionController::class, 'guardarHistorialdaMueble']);
+    Route::post('/admin/borrar/historiada/mueble', [CalculoDepreciacionController::class, 'borrarHistorialdaMueble']);
+
+    Route::post('/admin/guardar/historiada/maquinaria', [CalculoDepreciacionController::class, 'guardarHistorialdaMaquinaria']);
+    Route::post('/admin/borrar/historiada/maquinaria', [CalculoDepreciacionController::class, 'borrarHistorialdaMaquinaria']);
+
 
     Route::get('/admin/calculo/mueble/pdf/{id}', [CalculoDepreciacionController::class,'pdfCalculoBienMueble']);
     Route::get('/admin/calculo/maquinaria/pdf/{id}', [CalculoDepreciacionController::class,'pdfCalculoBienMaquinaria']);
@@ -167,8 +174,11 @@ Route::get('/panel', [ControlController::class,'indexRedireccionamiento'])->name
     Route::get('/admin/generador/pdf/inventario/inmueble', [ReportesController::class,'pdfInventarioInmuebles']);
     // pdf maquinaria
     Route::get('/admin/generador/pdf/inventario/maquinaria', [ReportesController::class,'pdfInventarioMaquinaria']);
-    // pdf bienes
-    Route::get('/admin/generador/pdf/inventario/bienes/{valor}', [ReportesController::class,'pdfInventarioBienes']);
+
+    // pdf bienes individuales
+    Route::get('/admin/pdf/bien/individual/{valor}/{id}', [ReportesController::class,'pdfInventarioBienes']);
+    Route::post('/admin/verificar/bienindividual/existe-codigo', [ReportesController::class, 'verificarCodigoBienIndividual']);
+
 
     // comodato
     Route::get('/admin/reporte/comodato/index', [ReportesController::class,'indexComodato'])->name('admin.reporte.comodato.index');

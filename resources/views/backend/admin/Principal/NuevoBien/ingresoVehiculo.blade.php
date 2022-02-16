@@ -72,7 +72,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Valor</label>
+                                            <label>Valor *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
@@ -210,7 +210,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Valor Residual</label>
+                                            <label>Valor Residual *</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-hand-holding-usd"></i></span>
@@ -341,8 +341,12 @@
             var reglaNumeroDecimal = /^[0-9]\d*(\.\d+)?$/;
             var reglaNumeroEntero = /^[0-9]\d*$/;
 
-            if(valor.length > 0){
-                if(!valor.match(reglaNumeroDecimal)) {
+            if(valor === ''){
+                toastr.error('Valor del Vehículo es requerido');
+                return;
+            }
+
+            if(!valor.match(reglaNumeroDecimal)) {
                     toastr.error('valor debe ser número Decimal');
                     return;
                 }
@@ -356,7 +360,7 @@
                     toastr.error('valor máximo 10 digitos de límite');
                     return;
                 }
-            }
+
 
             if(departamento == '0'){
                 toastr.error('Seleccionar departamento');
@@ -387,19 +391,20 @@
                 return;
             }
 
-            if(vidautil.length > 0){
-                if(!vidautil.match(reglaNumeroEntero)) {
+            if(vidautil.length > 0) {
+
+                if (!vidautil.match(reglaNumeroEntero)) {
                     toastr.error('vida util debe ser número Entero');
                     return;
                 }
 
-                if(vidautil < 0){
+                if (vidautil < 0) {
                     toastr.error('vida util no permite números negativos');
                     return;
                 }
 
-                if(vidautil.length > 9){
-                    toastr.error('vida util máximo 9 digitos de límite');
+                if (vidautil.length > 9) {
+                    toastr.error('vida util máximo 9 dígitos de límite');
                     return;
                 }
             }else{
@@ -418,7 +423,7 @@
                 }
 
                 if(anio.length > 9){
-                    toastr.error('año máximo 9 digitos de límite');
+                    toastr.error('año máximo 9 dígitos de límite');
                     return;
                 }
             }else{
@@ -434,7 +439,7 @@
 
             if(valorresidual.length > 0){
                 if(!valorresidual.match(reglaNumeroDecimal)) {
-                    toastr.error('valor residual debe ser número Decimal');
+                    toastr.error('valor residual debe ser número Decimal y No Negativos');
                     return;
                 }
 

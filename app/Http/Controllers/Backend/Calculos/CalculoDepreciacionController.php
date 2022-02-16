@@ -27,552 +27,578 @@ class CalculoDepreciacionController extends Controller
 
     public function verificarCodigo(Request $request){
 
-        if(BienesMuebles::where('codigo', $request->codigo)->first()){
-            return ['success' => 1];
+        if($info = BienesMuebles::where('codigo', $request->codigo)->first()){
+
+            if($info->vidautil == 0){
+                return ['success' => 2];
+            }
+
+            if($info->valor < 600){
+                return ['success' => 4];
+            }
+
+            return ['success' => 1, 'id' => $info->id, 'tipo' => 1];
         }
-        else if(BienesVehiculo::where('codigo', $request->codigo)->first()){
-            return ['success' => 1];
+        else if($info = BienesVehiculo::where('codigo', $request->codigo)->first()){
+
+            // no se puede calcular una division entre 0
+            if($info->vidautil == 0){
+                return ['success' => 3];
+            }
+
+            if($info->valor < 600){
+                return ['success' => 4];
+            }
+
+            return ['success' => 1, 'id' => $info->id, 'tipo' => 2];
         }else{
-            return ['success' => 2];
+            return ['success' => 0];
         }
 
     }
 
     // código del bien:
-    public function indexReporteCodigo($codigo){
+    public function indexReporteCodigo($id, $tipo){
 
         // solo bienes muebles y maquinaria
 
-        if($info = BienesMuebles::where('codigo', $codigo)
-            ->where('valor', '>', '600')
-            ->first()){
+        if($tipo == 1){
 
-            $infoConta = CodigoContable::where('id', $info->id_codcontable)->first();
-            $infoDepre = CodigoDepreciacion::where('id', $info->id_coddepreci)->first();
-            $infoUnidad = Departamento::where('id', $info->id_departamento)->first();
+            if($info = BienesMuebles::where('id', $id)->first()){
 
-            $contable = $infoConta->nombre . " (" . $infoConta->codconta . ")";
-            $depreciacion = $infoDepre->nombre . " (" . $infoConta->codconta . ")";
+                $infoConta = CodigoContable::where('id', $info->id_codcontable)->first();
+                $infoDepre = CodigoDepreciacion::where('id', $info->id_coddepreci)->first();
+                $infoUnidad = Departamento::where('id', $info->id_departamento)->first();
 
-            $fecha = $info->fechacompra = date("d-m-Y", strtotime($info->fechacompra));
+                $contable = $infoConta->nombre . " (" . $infoConta->codconta . ")";
+                $depreciacion = $infoDepre->nombre . " (" . $infoConta->codconta . ")";
 
-            // calculos
-            //tiempo util
-            $fechacompra = new DateTime($info->fechacompra);
-            $fechafab = new DateTime('-12-31');  // vacio
+                $fecha = $info->fechacompra = date("d-m-Y", strtotime($info->fechacompra));
 
-            $interval = $fechacompra->diff($fechafab);
+                // calculos
+                //tiempo util
+                $fechacompra = new DateTime($info->fechacompra);
+                $fechafab = new DateTime('-12-31');  // vacio
 
-            // 0.13
-            $tiempoutil = round($interval->format('%a')/365,2);
+                $interval = $fechacompra->diff($fechafab);
 
-            //anios pendientes
-            if($info->id_tipocompra == 1 ){ // nuevo
-                $aniospen = $info->vidautil;
-            }else{
-                // usado
-                $aniospen = $info->vidautil - $tiempoutil;
-            }
+                // 0.13
+                $tiempoutil = round($interval->format('%a')/365,2);
 
-            $valorres = round($info->valor * ($info->valresidual / 100),2);
-            $valordepre = $info->valor - $valorres;
+                //anios pendientes
+                if($info->id_tipocompra == 1 ){ // nuevo
+                    $aniospen = $info->vidautil;
+                }else{
+                    // usado
+                    $aniospen = $info->vidautil - $tiempoutil;
+                }
 
-            //depreciacion anual
-            if($aniospen>0){
-                $depanual = number_format((float)$valordepre / $aniospen, 2, '.', ',');
-            }else {
-                $depanual = 0;
-            }
+                $valorres = round($info->valor * ($info->valresidual / 100),2);
+                $valordepre = $info->valor - $valorres;
 
-            // protegerse de negativos
-            if($aniospen < 0){
-                $aniospen = 0;
-            }
+                //depreciacion anual
+                if($aniospen>0){
+                    $depanual = number_format((float)$valordepre / $aniospen, 2, '.', ',');
+                }else {
+                    $depanual = 0;
+                }
 
-            /*********************************** SI HAY REPOSICION VITAL ********************************/////
+                // protegerse de negativos
+                if($aniospen < 0){
+                    $aniospen = 0;
+                }
 
-            $repvit = SustitucionMueble::where('id_bienmueble', $info->id)->get();
+                /*********************************** SI HAY REPOSICION VITAL ********************************/////
 
-            foreach($repvit as $datorep){
-                $nuevoval = floatval($datorep->piezanueva)+floatval($datorep->valorajustado);
-                $nvalresidual = $nuevoval * ($info->valresidual / 100);
-                $newvaldepre = $nuevoval - round($nvalresidual,2);
-                $newdepreanual = $newvaldepre / $datorep->vidautil;
-                $newvalbien = $info->valor + floatval($datorep->piezanueva) - floatval($datorep->piezasustituida);
+                $repvit = SustitucionMueble::where('id_bienmueble', $info->id)->get();
 
-                $datorep->dfechamodificacion = date("d-m-Y", strtotime($datorep->fecha));
-                $datorep->dnuevovalor = "$" . number_format((float) $nuevoval, 2, '.', ',');
-
-                $datorep->dpiezasustituida = "$" . number_format((float) $datorep->piezasustituida, 2, '.', ',');
-                $datorep->dvalorresidual = "$" . number_format((float) $nvalresidual, 2, '.', ',');
-
-                $datorep->dpiezanueva = "$" . number_format((float) $datorep->piezanueva, 2, '.', ',');
-                $datorep->dvalordepreciar = "$" . number_format((float) $newvaldepre, 2, '.', ',');
-
-                $datorep->dnuevovalorbien = "$" . number_format((float) $newvalbien, 2, '.', ',');
-
-                $datorep->dvalorajustado = "$" . number_format((float) $datorep->valorajustado, 2, '.', ',');
-                $datorep->ddepreciacionanual = "$" . number_format((float) $newdepreanual, 2, '.', ',');
-            }
-
-            $datos = array(
-                'contable' => $contable,
-                'depreciacion' => $depreciacion,
-                'unidad' => $infoUnidad->nombre,
-                'anio' => $fecha,
-                'valorresidual' => number_format((float)$valorres, 2, '.', ','),
-                'valoradepreciar' => number_format((float)$valordepre, 2, '.', ','),
-                'aniopendiente' => $aniospen,
-                'depanual' => $depanual,
-            );
-
-            /***************************************  CALCULOS GENERALES DE DEPRECIACION NORMAL  ****************************************/
-
-            $aniocompra = date("Y", strtotime($info->fechacompra));
-
-            if($aniocompra == null){
-                return "Fecha de Compra es requerido";
-            }
-
-            $contador = round($aniospen) + 7;
-
-            //por si la reposicion fue cuando ya se habia depreciado por completo el bien
-            $vidaextra = SustitucionMueble::where('id_bienmueble', $info->id)->sum('vidautil');
-
-            if($vidaextra > 0){
-                $contador = $contador + floatval($vidaextra);
-            }
-
-            //---- CALCULO -----
-            $numdias = $aniospen * 365;
-            //dias del año UNO
-            $fechafin = new DateTime($aniocompra.'-12-31');
-            $interval2 = $fechafin->diff($fechacompra);
-            $diasaniouno = $interval2->format('%a');
-
-            //dias restantes / anios restantes
-            $diasrestantes = $numdias - $diasaniouno;
-
-            //depreciacion por dia
-            $deppordia = number_format((float)($valordepre / $aniospen) / 365, 7, '.', ',');
-
-            $i = 0;
-            $depacumulada = 0;
-            $depanualuno = $diasaniouno * $deppordia;
-
-            $depanualfin = 0;
-            $dataArray = array();
-
-            while($contador > 0){
-                $array["anio"] = $aniocompra;
-                $fechaini = $array['anio'].'-01-01';
-                $fechafin = $array['anio'].'-12-31';
-                $valorbien = $info->valor;
-
-                /******************************  CALCULO DE DEPRECIACION SI HAY REPOSICION VITAL ****************************/
-
-                if($repvitanio = SustitucionMueble::where('id_bienmueble', $info->id)
-                    ->whereBetween('fecha', array($fechaini, $fechafin))
-                    ->first()){
-
-                    $nuevoval = floatval($repvitanio->piezanueva) + floatval($repvitanio->valorajustado);
+                foreach($repvit as $datorep){
+                    $nuevoval = floatval($datorep->piezanueva)+floatval($datorep->valorajustado);
                     $nvalresidual = $nuevoval * ($info->valresidual / 100);
                     $newvaldepre = $nuevoval - round($nvalresidual,2);
-                    $newdepreanual = $newvaldepre / $repvitanio->vidautil;
+                    $newdepreanual = $newvaldepre / $datorep->vidautil;
+                    $newvalbien = $info->valor + floatval($datorep->piezanueva) - floatval($datorep->piezasustituida);
 
-                    //datos para calculos
-                    $numdiasrep = floatval($repvitanio->vidautil) * 365;
-                    $fechafin2 = new DateTime($fechafin);
-                    $fecharep = new DateTime($repvitanio->fecha);
-                    $interval22 = $fechafin2->diff($fecharep);
-                    $diasaniounorep = $interval22->format('%a');
+                    $datorep->dfechamodificacion = date("d-m-Y", strtotime($datorep->fecha));
+                    $datorep->dnuevovalor = "$" . number_format((float) $nuevoval, 2, '.', ',');
 
-                    //dias de depreciacion antes de la reposicion
-                    if($depanualfin > 0){
-                        $diasantes = 365 - $diasaniounorep;
-                        $depanterior = $diasantes * $deppordia;
-                        $new2 = $valorbien - $depacumulada - $depanterior;
+                    $datorep->dpiezasustituida = "$" . number_format((float) $datorep->piezasustituida, 2, '.', ',');
+                    $datorep->dvalorresidual = "$" . number_format((float) $nvalresidual, 2, '.', ',');
 
-                        $dataArray[] = [
-                            'aniocompra' => $aniocompra,
-                            'depanterior' => number_format((float)$depanterior, 2, '.', ','),
-                            'depacumulada' => number_format((float)$depacumulada+$depanterior, 2, '.', ','),
-                            'new2' => number_format((float)$new2, 2, '.', ','),
-                            'color' => 1, // gris
-                        ];
+                    $datorep->dpiezanueva = "$" . number_format((float) $datorep->piezanueva, 2, '.', ',');
+                    $datorep->dvalordepreciar = "$" . number_format((float) $newvaldepre, 2, '.', ',');
 
-                        $array["depanterior"] = $depanterior;
-                    }
+                    $datorep->dnuevovalorbien = "$" . number_format((float) $newvalbien, 2, '.', ',');
 
-                    //dias restantes / anios restantes
-                    $diasrestantes = $numdiasrep - $diasaniounorep;
-
-                    $contador = floatval($repvitanio->vidautil) + 1;
-                    $deppordia = number_format(($newdepreanual) / 365,7);
-                    //reinicio datos
-                    $depanualuno = $diasaniounorep * $deppordia;
-
-
-                    $depacumulada = 0;
-                    $i = 0;
-                    $valorbien = round(floatval($nuevoval),2);
-                    $nuevovalporrep = $valorbien;
-
-                    // Borrar historial de depreciacion de los años restantes
-                    $aniob = intval($aniocompra);
-                    $bandera = $contador + 1;
-                    while($bandera >= 0){
-
-                        HistorialdaMueble::where('id_bienmueble', $info->id)
-                            ->where('anio', $aniob)->delete();
-
-                        $bandera --;
-                        $aniob ++;
-                    }
+                    $datorep->dvalorajustado = "$" . number_format((float) $datorep->valorajustado, 2, '.', ',');
+                    $datorep->ddepreciacionanual = "$" . number_format((float) $newdepreanual, 2, '.', ',');
                 }
 
-                // PARA EL CALCULO DE LA DEPRECIACION ANUAL DE LA TABLA
-                if($i == 0 ){
-                    $depanualfin = $depanualuno;
-                } else {
-                    if ($diasrestantes >= 365){
-                        $depanualfin = $deppordia*365;
-                        $diasrestantes = $diasrestantes - 365;
-                    } else {
-                        $depanualfin = $deppordia*$diasrestantes;
-                        if($depanualfin <= 0 ){
-                            $depanualfin = 0 ;
+                $datos = array(
+                    'contable' => $contable,
+                    'depreciacion' => $depreciacion,
+                    'unidad' => $infoUnidad->nombre,
+                    'anio' => $fecha,
+                    'valorresidual' => number_format((float)$valorres, 2, '.', ','),
+                    'valoradepreciar' => number_format((float)$valordepre, 2, '.', ','),
+                    'aniopendiente' => $aniospen,
+                    'depanual' => $depanual,
+                );
+
+                /***************************************  CALCULOS GENERALES DE DEPRECIACION NORMAL  ****************************************/
+
+                $aniocompra = date("Y", strtotime($info->fechacompra));
+
+                if($aniocompra == null){
+                    return "Fecha de Compra es requerido";
+                }
+
+                $contador = round($aniospen) + 7;
+
+                //por si la reposicion fue cuando ya se habia depreciado por completo el bien
+                $vidaextra = SustitucionMueble::where('id_bienmueble', $info->id)->sum('vidautil');
+
+                if($vidaextra > 0){
+                    $contador = $contador + floatval($vidaextra);
+                }
+
+                //---- CALCULO -----
+                $numdias = $aniospen * 365;
+                //dias del año UNO
+                $fechafin = new DateTime($aniocompra.'-12-31');
+                $interval2 = $fechafin->diff($fechacompra);
+                $diasaniouno = $interval2->format('%a');
+
+                //dias restantes / anios restantes
+                $diasrestantes = $numdias - $diasaniouno;
+
+                //depreciacion por dia
+                $deppordia = number_format((float)($valordepre / $aniospen) / 365, 7, '.', ',');
+
+                $i = 0;
+                $depacumulada = 0;
+                $depanualuno = $diasaniouno * $deppordia;
+
+                $depanualfin = 0;
+                $dataArray = array();
+
+                while($contador > 0){
+                    $array["anio"] = $aniocompra;
+                    $fechaini = $array['anio'].'-01-01';
+                    $fechafin = $array['anio'].'-12-31';
+                    $valorbien = $info->valor;
+
+                    /******************************  CALCULO DE DEPRECIACION SI HAY REPOSICION VITAL ****************************/
+
+                    if($repvitanio = SustitucionMueble::where('id_bienmueble', $info->id)
+                        ->whereBetween('fecha', array($fechaini, $fechafin))
+                        ->first()){
+
+                        $nuevoval = floatval($repvitanio->piezanueva) + floatval($repvitanio->valorajustado);
+                        $nvalresidual = $nuevoval * ($info->valresidual / 100);
+                        $newvaldepre = $nuevoval - round($nvalresidual,2);
+                        $newdepreanual = $newvaldepre / $repvitanio->vidautil;
+
+                        //datos para calculos
+                        $numdiasrep = floatval($repvitanio->vidautil) * 365;
+                        $fechafin2 = new DateTime($fechafin);
+                        $fecharep = new DateTime($repvitanio->fecha);
+                        $interval22 = $fechafin2->diff($fecharep);
+                        $diasaniounorep = $interval22->format('%a');
+
+                        //dias de depreciacion antes de la reposicion
+                        if($depanualfin > 0){
+                            $diasantes = 365 - $diasaniounorep;
+                            $depanterior = $diasantes * $deppordia;
+                            $new2 = $valorbien - $depacumulada - $depanterior;
+
+                            $dataArray[] = [
+                                'aniocompra' => $aniocompra,
+                                'depanterior' => number_format((float)$depanterior, 2, '.', ','),
+                                'depacumulada' => number_format((float)$depacumulada+$depanterior, 2, '.', ','),
+                                'new2' => number_format((float)$new2, 2, '.', ','),
+                                'color' => 1, // gris
+                            ];
+
+                            $array["depanterior"] = $depanterior;
                         }
-                        $diasrestantes = $diasrestantes - 365;
-                    }
-                }
 
-                //si hay depreciacion anterior que sume las dos depreciaciones del mismo anio para guardarla asi en la db
-                if(isset($array["depanterior"]) && $array["depanterior"] != 0){
-                    $array["depanual"] = $depanualfin + floatval($array["depanterior"]);
-                }else{
-                    $array["depanual"] = $depanualfin;
-                }
+                        //dias restantes / anios restantes
+                        $diasrestantes = $numdiasrep - $diasaniounorep;
 
-                //GUARDAR DEPRECIACION ACUMULADA EN EL ARRAY TABLA
-                if($i == 0){
-                    $depacumulada += $depanualuno;
-                }else{
-                    if($depanualfin <= 0 ){
+                        $contador = floatval($repvitanio->vidautil) + 1;
+                        $deppordia = number_format(($newdepreanual) / 365,7);
+                        //reinicio datos
+                        $depanualuno = $diasaniounorep * $deppordia;
+
+
                         $depacumulada = 0;
-                    }
-                    $depacumulada += $depanualfin;
-                }
+                        $i = 0;
+                        $valorbien = round(floatval($nuevoval),2);
+                        $nuevovalporrep = $valorbien;
 
-                $array["depacumulada"] = $depacumulada;
+                        // Borrar historial de depreciacion de los años restantes
+                        $aniob = intval($aniocompra);
+                        $bandera = $contador + 1;
+                        while($bandera >= 0){
 
-                // variable afuera para agregarlo al array
-                $varNew2 = 0;
+                            HistorialdaMueble::where('id_bienmueble', $info->id)
+                                ->where('anio', $aniob)->delete();
 
-                //GUARDAR VALOR EN LIBROS EN EL ARREGLO Y TABLA
-                if ($depanualfin<=0){
-                    // nada
-                } else{
-                    if($i==0){
-                        $new = $valorbien - $depanualfin;
-                    }else{
-                        if(isset($nuevovalporrep) && $nuevovalporrep != NULL){
-                            $new = floatval($nuevovalporrep) - $depacumulada;
-                        }else{
-                            $new = $valorbien - $depacumulada;
+                            $bandera --;
+                            $aniob ++;
                         }
                     }
-                    $varNew2 = $new;
-                    $array["vallibros"] = $new;
+
+                    // PARA EL CALCULO DE LA DEPRECIACION ANUAL DE LA TABLA
+                    if($i == 0 ){
+                        $depanualfin = $depanualuno;
+                    } else {
+                        if ($diasrestantes >= 365){
+                            $depanualfin = $deppordia*365;
+                            $diasrestantes = $diasrestantes - 365;
+                        } else {
+                            $depanualfin = $deppordia*$diasrestantes;
+                            if($depanualfin <= 0 ){
+                                $depanualfin = 0 ;
+                            }
+                            $diasrestantes = $diasrestantes - 365;
+                        }
+                    }
+
+                    //si hay depreciacion anterior que sume las dos depreciaciones del mismo anio para guardarla asi en la db
+                    if(isset($array["depanterior"]) && $array["depanterior"] != 0){
+                        $array["depanual"] = $depanualfin + floatval($array["depanterior"]);
+                    }else{
+                        $array["depanual"] = $depanualfin;
+                    }
+
+                    //GUARDAR DEPRECIACION ACUMULADA EN EL ARRAY TABLA
+                    if($i == 0){
+                        $depacumulada += $depanualuno;
+                    }else{
+                        if($depanualfin <= 0 ){
+                            $depacumulada = 0;
+                        }
+                        $depacumulada += $depanualfin;
+                    }
+
+                    $array["depacumulada"] = $depacumulada;
+
+                    // variable afuera para agregarlo al array
+                    $varNew2 = 0;
+
+                    //GUARDAR VALOR EN LIBROS EN EL ARREGLO Y TABLA
+                    if ($depanualfin<=0){
+                        // nada
+                    } else{
+                        if($i==0){
+                            $new = $valorbien - $depanualfin;
+                        }else{
+                            if(isset($nuevovalporrep) && $nuevovalporrep != NULL){
+                                $new = floatval($nuevovalporrep) - $depacumulada;
+                            }else{
+                                $new = $valorbien - $depacumulada;
+                            }
+                        }
+                        $varNew2 = $new;
+                        $array["vallibros"] = $new;
+                    }
+
+                    //*** GUARDAR ARRAY
+
+                    $dataArray[] = [
+                        'aniocompra' => $aniocompra,
+                        'depanterior' => number_format((float)$depanualfin, 2, '.', ','),
+                        'depacumulada' => number_format((float)$depacumulada, 2, '.', ','),
+                        'new2' => number_format((float)$varNew2, 2, '.', ','),
+                        'color' => 2, // sin color
+                    ];
+
+                    $contador--;
+                    $aniocompra++;
+                    $i++;
+                    $array["depanterior"] = 0;
                 }
 
-                //*** GUARDAR ARRAY
+                $idbien = $info->id;
 
-                $dataArray[] = [
-                    'aniocompra' => $aniocompra,
-                    'depanterior' => number_format((float)$depanualfin, 2, '.', ','),
-                    'depacumulada' => number_format((float)$depacumulada, 2, '.', ','),
-                    'new2' => number_format((float)$varNew2, 2, '.', ','),
-                    'color' => 2, // sin color
-                ];
-
-                $contador--;
-                $aniocompra++;
-                $i++;
-                $array["depanterior"] = 0;
-            }
-
-            $idbien = $info->id;
-
-            return view('backend.admin.calculos.depreciacion.vistacalculocodigobienmueble', compact('info', 'datos', 'repvit', 'dataArray', 'idbien'));
-        }
-
-        else if($info = BienesVehiculo::where('codigo', $codigo)
-            ->where('valor', '>', '600')
-            ->first()){
-
-            $infoConta = CodigoContable::where('id', $info->id_codcontable)->first();
-            $infoDepre = CodigoDepreciacion::where('id', $info->id_coddepreci)->first();
-            $infoUnidad = Departamento::where('id', $info->id_departamento)->first();
-
-            $contable = $infoConta->nombre . " (" . $infoConta->codconta . ")";
-            $depreciacion = $infoDepre->nombre . " (" . $infoConta->codconta . ")";
-
-            $fecha = $info->fechacompra = date("d-m-Y", strtotime($info->fechacompra));
-
-            // calculos
-            //tiempo util
-            $fechacompra = new DateTime($info->fechacompra);
-            $fechafab = new DateTime('-12-31');  // vacio
-
-            $interval = $fechacompra->diff($fechafab);
-
-            $tiempoutil = round($interval->format('%a')/365,2);
-
-            //anios pendientes
-            if($info->id_tipocompra == 1 ){ // nuevo
-                $aniospen = $info->vidautil;
+                return view('backend.admin.calculos.depreciacion.vistacalculocodigobienmueble', compact('info', 'datos', 'repvit', 'dataArray', 'idbien'));
             }else{
-                // usado
-                $aniospen = $info->vidautil - $tiempoutil;
+                return view('errors.codigo_no_encontrado');
             }
+        }
+        else if($tipo == 2){
 
-            $valorres = round($info->valor * ($info->valresidual / 100),2);
-            $valordepre = $info->valor - $valorres;
+            if($info = BienesVehiculo::where('id', $id)->first()){
 
-            //depreciacion anual
-            if($aniospen>0){
-                $depanual = number_format((float)$valordepre / $aniospen, 2, '.', ',');
-            }else {
-                $depanual = 0;
-            }
+                $infoConta = CodigoContable::where('id', $info->id_codcontable)->first();
+                $infoDepre = CodigoDepreciacion::where('id', $info->id_coddepreci)->first();
+                $infoUnidad = Departamento::where('id', $info->id_departamento)->first();
 
-            // protegerse de negativos
-            if($aniospen < 0){
-                $aniospen = 0;
-            }
+                $contable = $infoConta->nombre . " (" . $infoConta->codconta . ")";
+                $depreciacion = $infoDepre->nombre . " (" . $infoConta->codconta . ")";
 
-            /*********************************** SI HAY REPOSICION VITAL ********************************/////
+                $fecha = $info->fechacompra = date("d-m-Y", strtotime($info->fechacompra));
 
-            $repvit = SustitucionMueble::where('id_bienmueble', $info->id)->get();
+                // calculos
+                //tiempo util
+                $fechacompra = new DateTime($info->fechacompra);
+                $fechafab = new DateTime('-12-31');  // vacio
 
-            foreach($repvit as $datorep){
-                $nuevoval = floatval($datorep->piezanueva)+floatval($datorep->valorajustado);
-                $nvalresidual = $nuevoval * ($info->valresidual / 100);
-                $newvaldepre = $nuevoval - round($nvalresidual,2);
-                $newdepreanual = $newvaldepre / $datorep->vidautil;
-                $newvalbien = $info->valor + floatval($datorep->piezanueva) - floatval($datorep->piezasustituida);
+                $interval = $fechacompra->diff($fechafab);
 
-                $datorep->dfechamodificacion = date("d-m-Y", strtotime($datorep->fecha));
-                $datorep->dnuevovalor = "$" . number_format((float) $nuevoval, 2, '.', ',');
+                $tiempoutil = round($interval->format('%a')/365,2);
 
-                $datorep->dpiezasustituida = "$" . number_format((float) $datorep->piezasustituida, 2, '.', ',');
-                $datorep->dvalorresidual = "$" . number_format((float) $nvalresidual, 2, '.', ',');
+                //anios pendientes
+                if($info->id_tipocompra == 1 ){ // nuevo
+                    $aniospen = $info->vidautil;
+                }else{
+                    // usado
+                    $aniospen = $info->vidautil - $tiempoutil;
+                }
 
-                $datorep->dpiezanueva = "$" . number_format((float) $datorep->piezanueva, 2, '.', ',');
-                $datorep->dvalordepreciar = "$" . number_format((float) $newvaldepre, 2, '.', ',');
+                $valorres = round($info->valor * ($info->valresidual / 100),2);
+                $valordepre = $info->valor - $valorres;
 
-                $datorep->dnuevovalorbien = "$" . number_format((float) $newvalbien, 2, '.', ',');
+                //depreciacion anual
+                if($aniospen>0){
+                    $depanual = number_format((float)$valordepre / $aniospen, 2, '.', ',');
+                }else {
+                    $depanual = 0;
+                }
 
-                $datorep->dvalorajustado = "$" . number_format((float) $datorep->valorajustado, 2, '.', ',');
-                $datorep->ddepreciacionanual = "$" . number_format((float) $newdepreanual, 2, '.', ',');
-            }
+                // protegerse de negativos
+                if($aniospen < 0){
+                    $aniospen = 0;
+                }
 
-            $datos = array(
-                'contable' => $contable,
-                'depreciacion' => $depreciacion,
-                'unidad' => $infoUnidad->nombre,
-                'anio' => $fecha,
-                'valorresidual' => number_format((float)$valorres, 2, '.', ','),
-                'valoradepreciar' => number_format((float)$valordepre, 2, '.', ','),
-                'aniopendiente' => $aniospen,
-                'depanual' => $depanual,
-            );
+                /*********************************** SI HAY REPOSICION VITAL ********************************/////
 
-            /***************************************  CALCULOS GENERALES DE DEPRECIACION NORMAL  ****************************************/
+                $repvit = SustitucionMaquinaria::where('id_bienvehiculo', $info->id)->get();
 
-            $aniocompra = date("Y", strtotime($info->fechacompra));
-
-            if($aniocompra == null){
-                return "Fecha de Compra es requerido";
-            }
-
-            $contador = round($aniospen) + 7;
-
-            //por si la reposicion fue cuando ya se habia depreciado por completo el bien
-            $vidaextra = SustitucionMaquinaria::where('id_bienvehiculo', $info->id)->sum('vidautil');
-
-            if($vidaextra > 0){
-                $contador = $contador + floatval($vidaextra);
-            }
-
-            //---- CALCULO -----
-            $numdias = $aniospen * 365;
-            //dias del año UNO
-            $fechafin = new DateTime($aniocompra.'-12-31');
-            $interval2 = $fechafin->diff($fechacompra);
-            $diasaniouno = $interval2->format('%a');
-
-            //dias restantes / anios restantes
-            $diasrestantes = $numdias - $diasaniouno;
-
-            //depreciacion por dia
-            $deppordia = number_format((float)($valordepre / $aniospen) / 365, 7, '.', ',');
-
-            $i = 0;
-            $depacumulada = 0;
-            $depanualuno = $diasaniouno * $deppordia;
-
-            $depanualfin = 0;
-            $dataArray = array();
-
-            while($contador > 0){
-                $array["anio"] = $aniocompra;
-                $fechaini = $array['anio'].'-01-01';
-                $fechafin = $array['anio'].'-12-31';
-                $valorbien = $info->valor;
-
-                /******************************  CALCULO DE DEPRECIACION SI HAY REPOSICION VITAL ****************************/
-
-                if($repvitanio = SustitucionMaquinaria::where('id_bienvehiculo', $info->id)
-                    ->whereBetween('fecha', array($fechaini, $fechafin))
-                    ->first()){
-
-                    $nuevoval = floatval($repvitanio->piezanueva) + floatval($repvitanio->valorajustado);
+                foreach($repvit as $datorep){
+                    $nuevoval = floatval($datorep->piezanueva)+floatval($datorep->valorajustado);
                     $nvalresidual = $nuevoval * ($info->valresidual / 100);
                     $newvaldepre = $nuevoval - round($nvalresidual,2);
-                    $newdepreanual = $newvaldepre / $repvitanio->vidautil;
-                    //$newvalbien = $info->valor + floatval($repvitanio->piezanueva) - floatval($repvitanio->piezasustituida);
+                    $newdepreanual = $newvaldepre / $datorep->vidautil;
+                    $newvalbien = $info->valor + floatval($datorep->piezanueva) - floatval($datorep->piezasustituida);
 
-                    //datos para calculos
-                    $numdiasrep = floatval($repvitanio->vidautil) * 365;
-                    $fechafin2 = new DateTime($fechafin);
-                    $fecharep = new DateTime($repvitanio->fecha);
-                    $interval22 = $fechafin2->diff($fecharep);
-                    $diasaniounorep = $interval22->format('%a');
+                    $datorep->dfechamodificacion = date("d-m-Y", strtotime($datorep->fecha));
+                    $datorep->dnuevovalor = "$" . number_format((float) $nuevoval, 2, '.', ',');
 
-                    //dias de depreciacion antes de la reposicion
-                    if($depanualfin > 0){
-                        $diasantes = 365 - $diasaniounorep;
-                        $depanterior = $diasantes * $deppordia;
-                        $new2 = $valorbien - $depacumulada - $depanterior;
+                    $datorep->dpiezasustituida = "$" . number_format((float) $datorep->piezasustituida, 2, '.', ',');
+                    $datorep->dvalorresidual = "$" . number_format((float) $nvalresidual, 2, '.', ',');
 
-                        $dataArray[] = [
-                            'aniocompra' => $aniocompra,
-                            'depanterior' => number_format((float)$depanterior, 2, '.', ','),
-                            'depacumulada' => number_format((float)$depacumulada+$depanterior, 2, '.', ','),
-                            'new2' => number_format((float)$new2, 2, '.', ','),
-                            'color' => 1, // gris
-                        ];
+                    $datorep->dpiezanueva = "$" . number_format((float) $datorep->piezanueva, 2, '.', ',');
+                    $datorep->dvalordepreciar = "$" . number_format((float) $newvaldepre, 2, '.', ',');
 
-                        $array["depanterior"] = $depanterior;
-                    }
+                    $datorep->dnuevovalorbien = "$" . number_format((float) $newvalbien, 2, '.', ',');
 
-                    //dias restantes / anios restantes
-                    $diasrestantes = $numdiasrep - $diasaniounorep;
-
-                    $contador = floatval($repvitanio->vidautil) + 1;
-                    $deppordia = number_format(($newdepreanual) / 365,7);
-                    //reinicio datos
-                    $depanualuno = $diasaniounorep * $deppordia;
-
-                    $depacumulada = 0;
-                    $i = 0;
-                    $valorbien = round(floatval($nuevoval),2);
-                    $nuevovalporrep = $valorbien;
-
-                    // Borrar historial de depreciacion de los años restantes
-                    $aniob = intval($aniocompra);
-                    $bandera = $contador + 1;
-                    while($bandera >= 0){
-
-                        /*HistorialdaMueble::where('id_bienmueble', $info->id)
-                            ->where('anio', $aniob)->delete();*/
-
-                        $bandera --;
-                        $aniob ++;
-                    }
+                    $datorep->dvalorajustado = "$" . number_format((float) $datorep->valorajustado, 2, '.', ',');
+                    $datorep->ddepreciacionanual = "$" . number_format((float) $newdepreanual, 2, '.', ',');
                 }
 
-                // PARA EL CALCULO DE LA DEPRECIACION ANUAL DE LA TABLA
-                if($i == 0 ){
-                    $depanualfin = $depanualuno;
-                } else {
-                    if ($diasrestantes >= 365){
-                        $depanualfin = $deppordia*365;
-                        $diasrestantes = $diasrestantes - 365;
-                    } else {
-                        $depanualfin = $deppordia*$diasrestantes;
-                        if($depanualfin <= 0 ){
-                            $depanualfin = 0 ;
+                $datos = array(
+                    'contable' => $contable,
+                    'depreciacion' => $depreciacion,
+                    'unidad' => $infoUnidad->nombre,
+                    'anio' => $fecha,
+                    'valorresidual' => number_format((float)$valorres, 2, '.', ','),
+                    'valoradepreciar' => number_format((float)$valordepre, 2, '.', ','),
+                    'aniopendiente' => $aniospen,
+                    'depanual' => $depanual,
+                );
+
+                /***************************************  CALCULOS GENERALES DE DEPRECIACION NORMAL  ****************************************/
+
+                $aniocompra = date("Y", strtotime($info->fechacompra));
+
+                if($aniocompra == null){
+                    return "Fecha de Compra es requerido";
+                }
+
+                $contador = round($aniospen) + 7;
+
+                //por si la reposicion fue cuando ya se habia depreciado por completo el bien
+                $vidaextra = SustitucionMaquinaria::where('id_bienvehiculo', $info->id)->sum('vidautil');
+
+                if($vidaextra > 0){
+                    $contador = $contador + floatval($vidaextra);
+                }
+
+                //---- CALCULO -----
+                $numdias = $aniospen * 365;
+                //dias del año UNO
+                $fechafin = new DateTime($aniocompra.'-12-31');
+                $interval2 = $fechafin->diff($fechacompra);
+                $diasaniouno = $interval2->format('%a');
+
+                //dias restantes / anios restantes
+                $diasrestantes = $numdias - $diasaniouno;
+
+                //depreciacion por dia
+                $deppordia = number_format((float)($valordepre / $aniospen) / 365, 7, '.', ',');
+
+                $i = 0;
+                $depacumulada = 0;
+                $depanualuno = $diasaniouno * $deppordia;
+
+                $depanualfin = 0;
+                $dataArray = array();
+
+                while($contador > 0){
+                    $array["anio"] = $aniocompra;
+                    $fechaini = $array['anio'].'-01-01';
+                    $fechafin = $array['anio'].'-12-31';
+                    $valorbien = $info->valor;
+
+                    /******************************  CALCULO DE DEPRECIACION SI HAY REPOSICION VITAL ****************************/
+
+                    if($repvitanio = SustitucionMaquinaria::where('id_bienvehiculo', $info->id)
+                        ->whereBetween('fecha', array($fechaini, $fechafin))
+                        ->first()){
+
+                        $nuevoval = floatval($repvitanio->piezanueva) + floatval($repvitanio->valorajustado);
+                        $nvalresidual = $nuevoval * ($info->valresidual / 100);
+                        $newvaldepre = $nuevoval - round($nvalresidual,2);
+                        $newdepreanual = $newvaldepre / $repvitanio->vidautil;
+                        //$newvalbien = $info->valor + floatval($repvitanio->piezanueva) - floatval($repvitanio->piezasustituida);
+
+                        //datos para calculos
+                        $numdiasrep = floatval($repvitanio->vidautil) * 365;
+                        $fechafin2 = new DateTime($fechafin);
+                        $fecharep = new DateTime($repvitanio->fecha);
+                        $interval22 = $fechafin2->diff($fecharep);
+                        $diasaniounorep = $interval22->format('%a');
+
+                        //dias de depreciacion antes de la reposicion
+                        if($depanualfin > 0){
+                            $diasantes = 365 - $diasaniounorep;
+                            $depanterior = $diasantes * $deppordia;
+                            $new2 = $valorbien - $depacumulada - $depanterior;
+
+                            $dataArray[] = [
+                                'aniocompra' => $aniocompra,
+                                'depanterior' => number_format((float)$depanterior, 2, '.', ','),
+                                'depacumulada' => number_format((float)$depacumulada+$depanterior, 2, '.', ','),
+                                'new2' => number_format((float)$new2, 2, '.', ','),
+                                'color' => 1, // gris
+                            ];
+
+                            $array["depanterior"] = $depanterior;
                         }
-                        $diasrestantes = $diasrestantes - 365;
-                    }
-                }
 
-                //si hay depreciacion anterior que sume las dos depreciaciones del mismo anio para guardarla asi en la db
-                if(isset($array["depanterior"]) && $array["depanterior"] != 0){
-                    $array["depanual"] = $depanualfin + floatval($array["depanterior"]);
-                }else{
-                    $array["depanual"] = $depanualfin;
-                }
+                        //dias restantes / anios restantes
+                        $diasrestantes = $numdiasrep - $diasaniounorep;
 
-                //GUARDAR DEPRECIACION ACUMULADA EN EL ARRAY TABLA
-                if($i == 0){
-                    $depacumulada += $depanualuno;
-                }else{
-                    if($depanualfin <= 0 ){
+                        $contador = floatval($repvitanio->vidautil) + 1;
+                        $deppordia = number_format(($newdepreanual) / 365,7);
+                        //reinicio datos
+                        $depanualuno = $diasaniounorep * $deppordia;
+
                         $depacumulada = 0;
-                    }
-                    $depacumulada += $depanualfin;
-                }
+                        $i = 0;
+                        $valorbien = round(floatval($nuevoval),2);
+                        $nuevovalporrep = $valorbien;
 
-                $array["depacumulada"] = $depacumulada;
+                        // Borrar historial de depreciacion de los años restantes
+                        $aniob = intval($aniocompra);
+                        $bandera = $contador + 1;
+                        while($bandera >= 0){
 
-                // variable afuera para agregarlo al array
-                $varNew2 = 0;
+                            /*HistorialdaMueble::where('id_bienmueble', $info->id)
+                                ->where('anio', $aniob)->delete();*/
 
-                //GUARDAR VALOR EN LIBROS EN EL ARREGLO Y TABLA
-                if ($depanualfin<=0){
-                    // nada
-                } else{
-                    if($i==0){
-                        $new = $valorbien - $depanualfin;
-                    }else{
-                        if(isset($nuevovalporrep) && $nuevovalporrep != NULL){
-                            $new = floatval($nuevovalporrep) - $depacumulada;
-                        }else{
-                            $new = $valorbien - $depacumulada;
+                            $bandera --;
+                            $aniob ++;
                         }
                     }
-                    $varNew2 = $new;
-                    $array["vallibros"] = $new;
+
+                    // PARA EL CALCULO DE LA DEPRECIACION ANUAL DE LA TABLA
+                    if($i == 0 ){
+                        $depanualfin = $depanualuno;
+                    } else {
+                        if ($diasrestantes >= 365){
+                            $depanualfin = $deppordia*365;
+                            $diasrestantes = $diasrestantes - 365;
+                        } else {
+                            $depanualfin = $deppordia*$diasrestantes;
+                            if($depanualfin <= 0 ){
+                                $depanualfin = 0 ;
+                            }
+                            $diasrestantes = $diasrestantes - 365;
+                        }
+                    }
+
+                    //si hay depreciacion anterior que sume las dos depreciaciones del mismo anio para guardarla asi en la db
+                    if(isset($array["depanterior"]) && $array["depanterior"] != 0){
+                        $array["depanual"] = $depanualfin + floatval($array["depanterior"]);
+                    }else{
+                        $array["depanual"] = $depanualfin;
+                    }
+
+                    //GUARDAR DEPRECIACION ACUMULADA EN EL ARRAY TABLA
+                    if($i == 0){
+                        $depacumulada += $depanualuno;
+                    }else{
+                        if($depanualfin <= 0 ){
+                            $depacumulada = 0;
+                        }
+                        $depacumulada += $depanualfin;
+                    }
+
+                    $array["depacumulada"] = $depacumulada;
+
+                    // variable afuera para agregarlo al array
+                    $varNew2 = 0;
+
+                    //GUARDAR VALOR EN LIBROS EN EL ARREGLO Y TABLA
+                    if ($depanualfin<=0){
+                        // nada
+                    } else{
+                        if($i==0){
+                            $new = $valorbien - $depanualfin;
+                        }else{
+                            if(isset($nuevovalporrep) && $nuevovalporrep != NULL){
+                                $new = floatval($nuevovalporrep) - $depacumulada;
+                            }else{
+                                $new = $valorbien - $depacumulada;
+                            }
+                        }
+                        $varNew2 = $new;
+                        $array["vallibros"] = $new;
+                    }
+
+                    //*** GUARDAR ARRAY
+
+                    $dataArray[] = [
+                        'aniocompra' => $aniocompra,
+                        'depanterior' => number_format((float)$depanualfin, 2, '.', ','),
+                        'depacumulada' => number_format((float)$depacumulada, 2, '.', ','),
+                        'new2' => number_format((float)$varNew2, 2, '.', ','),
+                        'color' => 2, // sin color
+                    ];
+
+                    $contador--;
+                    $aniocompra++;
+                    $i++;
+                    $array["depanterior"] = 0;
                 }
 
-                //*** GUARDAR ARRAY
+                $idbien = $info->id;
 
-                $dataArray[] = [
-                    'aniocompra' => $aniocompra,
-                    'depanterior' => number_format((float)$depanualfin, 2, '.', ','),
-                    'depacumulada' => number_format((float)$depacumulada, 2, '.', ','),
-                    'new2' => number_format((float)$varNew2, 2, '.', ','),
-                    'color' => 2, // sin color
-                ];
-
-                $contador--;
-                $aniocompra++;
-                $i++;
-                $array["depanterior"] = 0;
+                return view('backend.admin.calculos.depreciacion.vistacalculocodigobienvehiculo', compact('info', 'datos', 'repvit', 'dataArray', 'idbien'));
+            }
+            else{
+                // no encontrado
+                return view('errors.codigo_no_encontrado');
             }
 
-            $idbien = $info->id;
+        }else{
+            return view('errors.codigo_no_encontrado');
+        }
 
-            return view('backend.admin.calculos.depreciacion.vistacalculocodigobienvehiculo', compact('info', 'datos', 'repvit', 'dataArray', 'idbien'));
-        }
-        else{
-            // no encontrado
-            return view('backend.admin.calculos.depreciacion.vistanoencontrado', compact('codigo'));
-        }
     }
 
     public function guardarHistorialdaMueble(Request $request){
@@ -830,6 +856,17 @@ class CalculoDepreciacionController extends Controller
             return ['success' => 2];
         }
     }
+
+    public function borrarHistorialdaMueble(Request $request){
+        HistorialdaMueble::where('id_bienmueble', $request->id)->delete();
+        return ['success' => 1];
+    }
+
+    public function borrarHistorialdaMaquinaria(Request $request){
+        HistorialdaMaquinaria::where('id_bienvehiculo', $request->id)->delete();
+        return ['success' => 1];
+    }
+
 
     public function guardarHistorialdaMaquinaria(Request $request){
 
@@ -1252,7 +1289,6 @@ class CalculoDepreciacionController extends Controller
                 //reinicio datos
                 $depanualuno = $diasaniounorep * $deppordia;
 
-
                 $depacumulada = 0;
                 $i = 0;
                 $valorbien = round(floatval($nuevoval),2);
@@ -1339,11 +1375,13 @@ class CalculoDepreciacionController extends Controller
             $array["depanterior"] = 0;
         }
 
+        $html = \View::make('backend.admin.calculos.depreciacion.pdfcalculobienmueble', compact('info', 'datos', 'repvit', 'dataArray'))->render();
 
-        $view =  \View::make('backend.admin.calculos.depreciacion.pdfcalculobienmueble', compact('info', 'datos', 'repvit', 'dataArray'))->render();
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->getDomPDF()->set_option("enable_php", true);
-        $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4')
+            ->setOrientation('portrait')
+            ->setOption('footer-center', "Página [page] de [topage]")
+            ->setOption('footer-font-size', 9);
 
         return $pdf->stream();
     }
@@ -1605,19 +1643,27 @@ class CalculoDepreciacionController extends Controller
             $array["depanterior"] = 0;
         }
 
+        $html = \View::make('backend.admin.calculos.depreciacion.pdfcalculobienmaquinaria', compact('info', 'datos', 'repvit', 'dataArray'))->render();
 
-        $view =  \View::make('backend.admin.calculos.depreciacion.pdfcalculobienmaquinaria', compact('info', 'datos', 'repvit', 'dataArray'))->render();
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->getDomPDF()->set_option("enable_php", true);
-        $pdf->loadHTML($view)->setPaper('carta', 'portrait');
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4')
+            ->setOrientation('portrait')
+            ->setOption('footer-center', "Página [page] de [topage]")
+            ->setOption('footer-font-size', 9);
 
         return $pdf->stream();
     }
 
     public function pdfCalculoAnual($anio){
 
-        $historialMueble = HistorialdaMueble::where('anio', $anio)->get();
-        $historialMaquinaria = HistorialdaMaquinaria::where('anio', $anio)->get();
+        $historialMueble = HistorialdaMueble::where('anio', $anio)
+            ->where('depanual', '>', 0)
+            ->orderBy('id', 'ASC')
+            ->get();
+        $historialMaquinaria = HistorialdaMaquinaria::where('anio', $anio)
+            ->where('depanual', '>', 0)
+            ->orderBy('id', 'ASC')
+            ->get();
 
         $total17 = 0.00;
         $total19 = 0.00;
@@ -1628,7 +1674,7 @@ class CalculoDepreciacionController extends Controller
 
             if($datosbien = BienesMuebles::where('id', $ll->id_bienmueble)->first()){
 
-                $datoscoddepre = CodigoDepreciacion::where('id', $ll->id_coddepreci)->first();
+                $datoscoddepre = CodigoDepreciacion::where('id', $datosbien->id_coddepreci)->first();
                 $totaldep = $totaldep + floatval($ll->depanual);
 
                 if($datoscoddepre->coddepre == "24199017"){
@@ -1645,6 +1691,7 @@ class CalculoDepreciacionController extends Controller
                 }
 
                 $dataArray[] = [
+                    'id' => $ll->id,
                     'departamento' => $datosbien->id_departamento,
                     'codigo' => $datosbien->codigo,
                     'descripcion' => $datosbien->descripcion,
@@ -1660,7 +1707,7 @@ class CalculoDepreciacionController extends Controller
 
             if($datosbien = BienesVehiculo::where('id', $ll->id_bienvehiculo)->first()){
 
-                $datoscoddepre = CodigoDepreciacion::where('id', $ll->id_coddepreci)->first();
+                $datoscoddepre = CodigoDepreciacion::where('id', $datosbien->id_coddepreci)->first();
                 $totaldep = $totaldep + floatval($ll->depanual);
 
                 if($datoscoddepre->coddepre == "24199017"){
@@ -1675,6 +1722,7 @@ class CalculoDepreciacionController extends Controller
                 }
 
                 $dataArray[] = [
+                    'id' => $ll->id,
                     'departamento' => $datosbien->id_departamento,
                     'codigo' => $datosbien->codigo,
                     'descripcion' => $datosbien->descripcion,
@@ -1686,10 +1734,27 @@ class CalculoDepreciacionController extends Controller
             }
         }
 
-        $view =  \View::make('backend.admin.calculos.depreciacion.pdfcalculoanual', compact('dataArray', 'anio', 'totaldep', 'total17', 'total19'))->render();
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->getDomPDF()->set_option("enable_php", true);
-        $pdf->loadHTML($view)->setPaper('carta', 'landscape');
+        // ordenar array por id
+        $collection = collect($dataArray);
+
+        $collection->sortBy(function ($item) {
+            return $item['id'];
+        });
+
+        // lista collection ordenada
+        $sortedArray  = $collection->all();
+
+        $total17 = number_format((float)$total17, 2, '.', ',');
+        $total19 = number_format((float)$total19, 2, '.', ',');
+        $totaldep = number_format((float)$totaldep, 2, '.', ',');
+
+        $html = \View::make('backend.admin.calculos.depreciacion.pdfcalculoanual', compact('sortedArray', 'anio', 'totaldep', 'total17', 'total19'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4')
+            ->setOrientation('landscape')
+            ->setOption('footer-center', "Página [page] de [topage]")
+            ->setOption('footer-font-size', 9);
 
         return $pdf->stream();
     }

@@ -128,7 +128,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-2 col-form-label">Código del bien:</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="codigo-bloque2" value="UIN-49-96-1">
+                                                    <input type="text" class="form-control" id="codigo-bloque2">
                                                 </div>
                                             </div>
 
@@ -141,11 +141,8 @@
 
                                     </form>
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -227,9 +224,24 @@
                 .then((response) => {
                     closeLoading();
                     if(response.data.success === 1){
+
+                        var id = response.data.id;
+                        var tipo = response.data.tipo;
+
                        // encontrado
-                        window.location.href="{{ url('/admin/reporte/codigo-bien/') }}/" + codigo;
+                        window.location.href="{{ url('/admin/reporte/codigo-bien/') }}/" + id + "/" + tipo;
                     }
+                    else if(response.data.success === 2){
+                        toastr.error('Vida útil en Bien Mueble no puede ser 0');
+                    }
+
+                    else if(response.data.success === 3){
+                        toastr.error('Vida útil en vehículo no puede ser 0');
+                    }
+                    else if(response.data.success === 4){
+                        toastr.error('El bien es menor a $600.00')
+                    }
+
                     else {
                         // no encontrado
                         msjNoEncontrado();

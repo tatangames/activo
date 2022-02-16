@@ -18,8 +18,12 @@ class ControlController extends Controller
 
         // $permiso = $user->getAllPermissions()->pluck('name');
 
-        // Rol 1: Encargado-Empresas
-        if($user->hasPermissionTo('vista.principal')){
+        // Rol 1: Encargado-Administrador
+        if($user->hasPermissionTo('vista.roles')){
+            $ruta = 'admin.roles.index';
+        }
+
+        else  if($user->hasPermissionTo('vista.principal.sistema')){
             $ruta = 'admin.vista.principal';
         }
 

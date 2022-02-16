@@ -201,6 +201,16 @@
 
                                             </div>
 
+                                            <div class="form-group">
+                                                <label>Código</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-edit"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" maxlength="100" id="codigo-bienes">
+                                                </div>
+                                            </div>
+
                                         </div>
 
                                         <div class="card-footer">
@@ -313,17 +323,64 @@
             var radio2 = document.getElementById('customRadioMaqui2').checked; // bienes inmuebles
             var radio3 = document.getElementById('customRadioMaqui3').checked; // maquinaria
 
-            if(radio1){
-                window.open("{{ URL::to('admin/generador/pdf/inventario/bienes') }}/" + 1);
+            var codigo = document.getElementById('codigo-bienes').value;
+
+            if(codigo === ''){
+                toastr.error('Código del bien es requerido');
+                return;
             }
-            else if(radio2){
-                window.open("{{ URL::to('admin/generador/pdf/inventario/bienes') }}/" + 2);
+
+            var tipo = 0;
+
+            if(radio1){
+                tipo = 1;
+            }else if(radio2){
+                tipo = 2;
             }
             else if(radio3){
-                window.open("{{ URL::to('admin/generador/pdf/inventario/bienes') }}/" + 3);
+                tipo = 3;
             }else{
                 toastr.error('Seleccionar una opción');
             }
+            var formData = new FormData();
+            formData.append('codigo', codigo);
+            formData.append('tipo', tipo);
+            // buscar si existe el bien
+            axios.post(url+'/verificar/bienindividual/existe-codigo', formData, {
+            })
+
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+                        // encontrado
+
+                        var id = response.data.id;
+                        window.open("{{ URL::to('admin/pdf/bien/individual') }}/" + tipo + "/" + id);
+                    }
+
+                    else {
+                        // no encontrado
+                        msjNoEncontrado();
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+        function msjNoEncontrado(){
+            Swal.fire({
+                title: 'Código No encontrado',
+                text: '',
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonColor: '#28a745',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                }
+            });
         }
 
     </script>

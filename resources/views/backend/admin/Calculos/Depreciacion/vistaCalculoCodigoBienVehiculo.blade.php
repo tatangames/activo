@@ -29,6 +29,11 @@
                 <i class="fas fa-pencil-alt"></i>
                 Generar PDF
             </button>
+
+            <button type="button" onclick="opcionBorrar()" style="float: right" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash-alt"></i>
+                Borrar Registro
+            </button>
         </div>
     </section>
 
@@ -251,18 +256,18 @@
 
                                         <tr style="background-color: #ddd;">
                                             <td>{{ $data['aniocompra'] }}</td>
-                                            <td>{{ $data['depanterior'] }}</td>
-                                            <td>{{ $data['depacumulada'] }}</td>
-                                            <td>{{ $data['new2'] }}</td>
+                                            <td>$ {{ $data['depanterior'] }}</td>
+                                            <td>$ {{ $data['depacumulada'] }}</td>
+                                            <td>$ {{ $data['new2'] }}</td>
                                         </tr>
 
                                     @else
 
                                         <tr style="background-color: #eee;">
                                             <td>{{ $data['aniocompra'] }}</td>
-                                            <td>{{ $data['depanterior'] }}</td>
-                                            <td>{{ $data['depacumulada'] }}</td>
-                                            <td>{{ $data['new2'] }}</td>
+                                            <td>$ {{ $data['depanterior'] }}</td>
+                                            <td>$ {{ $data['depacumulada'] }}</td>
+                                            <td>$ {{ $data['new2'] }}</td>
                                         </tr>
 
                                     @endif
@@ -320,6 +325,23 @@
         })
     }
 
+    function opcionBorrar(){
+        Swal.fire({
+            title: 'Borrar Registro?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Borrar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                borrar();
+            }
+        })
+    }
+
     function guardar(){
 
         var idbien = {{ $idbien }};
@@ -334,7 +356,7 @@
                 closeLoading();
 
                 if(response.data.success === 1){
-                    infoGuardado();
+                    toastr.success('Guardado correctamente');
                 }
                 else {
                     toastr.error('Error al registrar');
@@ -346,15 +368,37 @@
             });
     }
 
-    function infoGuardado(){
-
-    }
-
     function verPDF(){
 
         var idbien = {{ $idbien }};
 
         window.open("{{ URL::to('admin/calculo/maquinaria/pdf') }}/" + idbien);
+    }
+
+    function borrar(){
+
+        var idbien = {{ $idbien }};
+
+        var formData = new FormData();
+        formData.append('id', idbien);
+
+        axios.post(url+'/borrar/historiada/maquinaria', formData, {
+        })
+            .then((response) => {
+
+                closeLoading();
+
+                if(response.data.success === 1){
+                    toastr.success('Registro eliminado');
+                }
+                else {
+                    toastr.error('Error al eliminar');
+                }
+            })
+            .catch((error) => {
+                toastr.error('Error al eliminar');
+                closeLoading();
+            });
     }
 
     </script>
